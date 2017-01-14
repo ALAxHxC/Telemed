@@ -1,4 +1,4 @@
-package ponny.org.telemed.Vistas;
+package ponny.org.telemed.vistas;
 
 import android.app.AlertDialog;
 import android.content.Context;
