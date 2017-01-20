@@ -37,6 +37,11 @@ public class Oximetria {
     }
 
     public void setPi(double pi) {
-        this.pi = pi;
+        this.pi = (pi/10.0);
+    }
+    public boolean datosValidos()
+    {
+        return   !(this.spo2 >= 127 || this.pulse >= 255 || this.pi == 0.0);
+
     }
 }

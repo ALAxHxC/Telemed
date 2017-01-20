@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="spo2_base">85</integer>
+    <integer name="puslo_bajo">60</integer>
+    <integer name="pulso_alto">130</integer>
+
+
+</resources>

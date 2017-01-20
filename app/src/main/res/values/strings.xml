@@ -6,4 +6,26 @@
     <string name="address">address</string>
     <string name="servicio_oximetero">cdeacb80-5235-4c07-8846-93a37ee6b86d</string>
     <string name="caracteristica_oximetro">cdeacb81-5235-4c07-8846-93a37ee6b86d</string>
+    <string name="sent">sent</string>
+    <string name="delivered">delivered</string>
+    <string name="preference_archivo">preferencias</string>
+    <string name="emergencia_numero1">numero1</string>
+    <string name="emergencia_numero2">numero2</string>
+    <!-- Tool bar-->
+
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Settings</string>
+    <string name="action_new">Settings</string>
+    <string name="logo_desc">App logo</string>
+    <string name="titulo_numero">Ingrese el numero de contacto</string>
+    <string name="cuerpo_numero">Este numero sera contactado en caso de emergencia</string>
+    <string name="llame">Imposible Llamar</string>
+    <string name="llame_mensaje">Porfavor contacte a su servicio medico</string>
+    <string name="spo2">spo2</string>
+    <string name="pulso">pulso</string>
+    <string name="pulso_bajo">pulso_bajo</string>
+    <string name="pulso_alto">pulso_alto</string>
+    <string name="emergenciabase">123</string>
+
+
 </resources>

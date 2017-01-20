@@ -14,6 +14,8 @@ import android.widget.TextView;
 import ponny.org.telemed.R;
 import ponny.org.telemed.negocio.Oximetria;
 import ponny.org.telemed.red.bluetooth.ControladorBLE;
+import ponny.org.telemed.red.celular.SimGSM;
+import ponny.org.telemed.red.celular.Sms;
 import ponny.org.telemed.servicios.bluetooth.BluetoothLeService;
 import ponny.org.telemed.servicios.bluetooth.ServicioRegistro;
 
@@ -104,7 +106,7 @@ public class OximeterActivity extends AppCompatActivity {
                     String recibido = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                     byte[] bytes = intent.getExtras().getByteArray("data");
                     servicio.tratarDatos(bytes,oximetria,txtSPO2,txtPI,txtPulse);
-                    Log.println(Log.ASSERT, "BLE", "Datos");
+                    //Log.println(Log.ASSERT, "BLE", "Datos");
                 } catch (NullPointerException ex) {
                     Log.println(Log.ASSERT, "BLE", ex.toString());
                 }
@@ -120,4 +122,5 @@ public class OximeterActivity extends AppCompatActivity {
         name = getIntent().getStringExtra(getString(R.string.name_device));
         Log.println(Log.ASSERT, "BLE", name + " " + address);
     }
+
 }

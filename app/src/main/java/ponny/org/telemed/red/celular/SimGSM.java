@@ -1,31 +1,41 @@
 package ponny.org.telemed.red.celular;
 
 import android.content.Context;
+import android.telephony.CellInfoGsm;
+import android.telephony.CellSignalStrengthGsm;
+import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 /**
  * Created by Daniel on 16/01/2017.
  */
 
 public class SimGSM {
-    private Context context;
+
     private TelephonyManager telmanager;
-    public SimGSM(Context context) {
-        this.context = context;
-        telmanager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+    public static boolean simcard;
+    public SimGSM(TelephonyManager telmanager) {
 
+        try {
+           this.telmanager= telmanager;
+            simcard=simReady();
+   }catch (NullPointerException ex)
+        {
 
+            simcard=false;
+        }
     }
 
     /**
      * Si la simcard esta lista
+     *
      * @return
      */
-    public boolean simReady() {
+    private boolean simReady() {
         return telmanager.getSimState() == TelephonyManager.SIM_STATE_READY;
     }
-
 
 
 }
