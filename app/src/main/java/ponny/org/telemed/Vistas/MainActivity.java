@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 
 import ponny.org.telemed.R;
 import ponny.org.telemed.datos.Preferencias;
+import ponny.org.telemed.datos.basededatos.OximetriaBDController;
+import ponny.org.telemed.datos.firebase.FireBaseManager;
 import ponny.org.telemed.red.bluetooth.ControladorBLE;
 import ponny.org.telemed.red.celular.SimGSM;
 import ponny.org.telemed.red.internet.AccesoInternet;
@@ -31,34 +34,41 @@ import static ponny.org.telemed.red.internet.CamioDeEstadoRed.internet;
 public class MainActivity extends AppCompatActivity {
 
     private ControladorBLE controladorBLE;
-
+    private FloatingActionButton btnEscan;
     private Handler mHandlerScan;
     private static final long SCAN_PERIOD = 100000;
-    Intent gattServiceIntent;
-    private Preferencias preferencias;
     private Mensajes mensajes;
-
+    private OximetriaBDController oximetriaBDController;
+   // private FireBaseManager fireBaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle(null);
 
-        Toolbar topToolBar = (Toolbar)findViewById(R.id.toolbar);
+        Toolbar topToolBar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(topToolBar);
         topToolBar.setLogo(R.drawable.logo);
         topToolBar.setLogoDescription(getResources().getString(R.string.logo_desc));
-        /// Log.println(Log.ASSERT,"INTERNET", AccesoInternet.comprobacion(this)+"");
+
         mHandlerScan = new Handler();
-        preferencias=new Preferencias(this);
-        controladorBLE = new ControladorBLE(this, mLeScanCallback);
+        mensajes = new Mensajes(this);
+        mensajes.generarDialogoPacienteInicial();
+        controladorBLE = new ControladorBLE(this, mLeScanCallback, mensajes);
         controladorBLE.validarConexionBlueetooth();
-        mensajes=new Mensajes(this);
+        oximetriaBDController = new OximetriaBDController(this);
+
+        try {
+            Log.println(Log.ASSERT, "BD", "Cantidad Registros" + oximetriaBDController.cargarRegistros().size());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         iniciarRed();
         btnBuscar();
         activarBluetooth();
-        gattServiceIntent = new Intent(this, BluetoothLeService.class);
+
 
     }
 
@@ -78,14 +88,16 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            cargarRegistrosAcvitiy();
             return true;
         }
-        if(id == R.id.action_refresh){
-            mensajes.registrarNumero(getString(R.string.titulo_numero),getString(R.string.cuerpo_numero));
-          //  Toast.makeText(MainActivity.this, "Refresh App", Toast.LENGTH_LONG).show();
+        if (id == R.id.action_refresh) {
+            mensajes.registrarNumero(getString(R.string.titulo_numero), getString(R.string.cuerpo_numero));
+
         }
-        if(id == R.id.action_new){
-            Toast.makeText(MainActivity.this, "Create Text", Toast.LENGTH_LONG).show();
+        if (id == R.id.action_new) {
+            mensajes.generarDialogoParametros(getString(R.string.titulo_parametros), false);
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -136,30 +148,7 @@ public class MainActivity extends AppCompatActivity {
     private void scanearDispositivo(final boolean enable) {
         if (enable) {
             // Stops scanning after a pre-defined scan period.
-            mHandlerScan.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    controladorBLE.getAdapter().stopLeScan(mLeScanCallback);
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        controladorBLE.getAdapter().getBluetoothLeScanner().startScan(controladorBLE.scanCallback());
-                      /*  controladorBLE.getAdapter().getBluetoothLeScanner().startScan(new ScanCallback() {
-                            @Override
-                            public void onScanResult(int callbackType, ScanResult result) {
-                                super.onScanResult(callbackType, result);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Log.println(Log.ASSERT, "BLE", result.getDevice().getName());
-                                    if (result.getDevice().getName().equalsIgnoreCase(getString(R.string.name_device))) {conectar();}
-                                } else {
-                                    Log.println(Log.ASSERT, "BLE", "Nada");
-                                }
-                            }
-                        });*/
-                    }
-                    invalidateOptionsMenu();
-                }
-            }, SCAN_PERIOD);
+            mHandlerScan.postDelayed(controladorBLE.hiloScan, SCAN_PERIOD);
 
 
             controladorBLE.getAdapter().startLeScan(mLeScanCallback);
@@ -190,6 +179,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnBuscar() {
+
+        btnEscan = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        btnEscan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+          //      fireBaseManager.cargarPaciente(MainActivity.this, mensajes.getPreferencias());
+                scanearDispositivo(true);
+            }
+        });
         Button btnBuscar = (Button) findViewById(R.id.btnBuscar);
         btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,13 +197,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    private void iniciarRed()
-    {
+
+    private void iniciarRed() {
         internet = AccesoInternet.comprobacion(this);
         SimGSM simGSM = new SimGSM((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE));
-        Log.println(Log.ASSERT,"TEL","SIM:"+SimGSM.simcard);
-    //    Sms sms=new Sms(this,"3118577411","mensajeprueba");
-     //   sms.enviarMensaje();
+        Log.println(Log.ASSERT, "TEL", "SIM:" + SimGSM.simcard);
+        //    Sms sms=new Sms(this,"3118577411","mensajeprueba");
+        //   sms.enviarMensaje();
+    }
+
+    public void cargarRegistrosAcvitiy() {
+
+
+        Intent intent = new Intent(this, Registros.class);
+        startActivity(intent);
+
     }
 
 

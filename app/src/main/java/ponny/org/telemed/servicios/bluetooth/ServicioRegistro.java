@@ -3,19 +3,25 @@ package ponny.org.telemed.servicios.bluetooth;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ponny.org.telemed.R;
 import ponny.org.telemed.datos.Preferencias;
+import ponny.org.telemed.datos.basededatos.OximetriaBDController;
 import ponny.org.telemed.negocio.Oximetria;
 import ponny.org.telemed.red.bluetooth.ControladorBLE;
 import ponny.org.telemed.red.celular.Llamada;
 import ponny.org.telemed.red.celular.SimGSM;
 import ponny.org.telemed.red.celular.Sms;
+import ponny.org.telemed.vistas.MainActivity;
+import ponny.org.telemed.vistas.Mensajes;
 
 /**
  * Created by Daniel on 13/01/2017.
@@ -23,18 +29,27 @@ import ponny.org.telemed.red.celular.Sms;
 public class ServicioRegistro {
     private ControladorBLE controladorBLE;
     private Context context;
-
     private int contador;
     private Oximetria oximetria;
     private boolean enviado;
-private Preferencias preferencias;
-    public ServicioRegistro(ControladorBLE controladorBLE, Context context) {
+    private OximetriaBDController controllerOximetria;
+    private Preferencias preferencias;
+    private Mensajes mensajes;
+
+    public ServicioRegistro(ControladorBLE controladorBLE, Context context, Mensajes mensajes) {
         this.controladorBLE = controladorBLE;
         this.context = context;
-        preferencias=new Preferencias(context);
+        preferencias = new Preferencias(context);
+        controllerOximetria = new OximetriaBDController(context);
+        oximetria = new Oximetria();
+        this.mensajes = mensajes;
         enviado = false;
     }
 
+    /**
+     * Filtros de la conexion bluetooth
+     * @return
+     */
     public IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
@@ -44,6 +59,10 @@ private Preferencias preferencias;
         return intentFilter;
     }
 
+    /**
+     * Muestra lso servicios y perfiles del dispositivo
+     * @param gattServices
+     */
     public void displayGattServicesService(List<BluetoothGattService> gattServices) {
         Log.println(Log.ASSERT, "BLE", "sERVICIOS");
         if (gattServices == null)
@@ -65,14 +84,20 @@ private Preferencias preferencias;
         }
     }
 
-    public void tratarDatos(byte[] bytes, Oximetria oximetria, TextView spo2, TextView pi, TextView pulse) {
+    /**
+     * Recibe los datos del dispopsitivo y les da tratamiento
+     * @param bytes
+     * @param spo2
+     * @param pi
+     * @param pulse
+     */
+    public void tratarDatos(byte[] bytes, TextView spo2, TextView pi, TextView pulse) {
         if (bytes[0] == -128) {
         } else if (bytes[0] == -127) {
 
             oximetria.setPi((byte) bytes[3] & 0xFF);
             oximetria.setPulse((byte) bytes[1] & 0xFF);
             oximetria.setSpo2((byte) bytes[2] & 0xFF);
-            this.oximetria = oximetria;
             spo2.setText(oximetria.getSpo2() + "");
             pi.setText(oximetria.getPi() + "");
             pulse.setText(oximetria.getPulse() + "");
@@ -82,27 +107,44 @@ private Preferencias preferencias;
             if (oximetria.datosValidos()) {
                 contador++;
 
-                if (contador > 4) {
+                if (contador > context.getResources().getInteger(R.integer.valores_validos)) {
+                    oximetria.setCalendar(Calendar.getInstance());
+
                     //   Log.println(Log.ASSERT, "BLE", "Enviar mensaje");
                     if (!enviado) {
-                        hacerLLamada();
+
                         if (SimGSM.simcard) {
 
+                            //       hacerLLamada();
 
                             //enviarMensaje();
                             Log.println(Log.ASSERT, "BLE", mensaje());
                             // enviarMensaje();
 
-                        }else
-                        {    Log.println(Log.ASSERT, "BLE", "No hay simcard disponible");
+                        } else {
+
+                            Log.println(Log.ASSERT, "BLE", "No hay simcard disponible");
                         }
+                        oximetria.setDetalle(new Date());
+                        long resp = controllerOximetria.insertarOximetria(oximetria);
+                        if (resp >= 1) {
+                            mensajes.Toast(context.getString(R.string.registro_exitoso));
+                        } else {
+                            mensajes.Toast(context.getString(R.string.registro_fail));
+
+
+                        }
+                        volverAinicio();
                     }
 
-                    }
                 }
             }
         }
+    }
 
+    /**
+     * Envia mensaje SMS
+     */
     public void enviarMensaje() {
         enviado = true;
         //   Sms sms = new Sms(context, "3118577411", mensaje());
@@ -110,13 +152,29 @@ private Preferencias preferencias;
         sms.enviarMensaje();
     }
 
+    /**
+     * Realiza la llamada telefonica
+     */
     public void hacerLLamada() {
         enviado = true;
         new Llamada(preferencias.getNumero1(), context).llamarContacto();
     }
 
+    /**
+     * Mensaje que serva enviado SMS
+     * @return
+     */
     public String mensaje() {
         return "Hola , tengo un Spo2: " + oximetria.getSpo2() + "\n" + " y Pulso :" + oximetria.getPulse() + "\n Neesecito Atencion Medica";
 
     }
+
+    public void volverAinicio() {
+        //desconecta el dispositivo
+        controladorBLE.desconnectar();
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
+
+    }
+
 }

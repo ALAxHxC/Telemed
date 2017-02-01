@@ -10,5 +10,7 @@
     <style name="text_titulo" parent="Base.TextAppearance.AppCompat.Body2">
         <item name="android:gravity">center</item>
     </style>
+    <style name="date_picker_theme" parent="@android:style/Widget.DatePicker">
+    </style>
 
 </resources>

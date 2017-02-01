@@ -21,23 +21,23 @@ import ponny.org.telemed.servicios.bluetooth.BluetoothLeService;
 public class ControladorBLE {
     public static final int REQUEST_ENABLE_BT = 1;
     private Context mContext;
-    private Mensajes mensajes;
     private BluetoothAdapter.LeScanCallback mLeScanCallback;
     private BluetoothLeService mBluetoothLeService;
     private boolean conexion;
+    private Mensajes mensajes;
 
-    public ControladorBLE(Context mContext, BluetoothAdapter.LeScanCallback mLeScanCallback) {
+    public ControladorBLE(Context mContext, BluetoothAdapter.LeScanCallback mLeScanCallback, Mensajes mensajes) {
         this.mContext = mContext;
         this.mLeScanCallback = mLeScanCallback;
-        mensajes = new Mensajes(mContext);
-        conexion=false;
+        this.mensajes = mensajes;
+        conexion = false;
     }
-    public ControladorBLE(Context mContext)
-    {
+
+    public ControladorBLE(Context mContext, Mensajes mensajes) {
         this.mContext = mContext;
         this.mLeScanCallback = null;
-        mensajes = new Mensajes(mContext);
-        conexion=false;
+        this.mensajes = mensajes;
+        conexion = false;
 
     }
 
@@ -60,6 +60,11 @@ public class ControladorBLE {
         return ((BluetoothManager) mContext.getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
     }
 
+    /**
+     * Escan de BLE
+     *
+     * @return
+     */
     public ScanCallback scanCallback() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return (new ScanCallback() {
@@ -82,21 +87,28 @@ public class ControladorBLE {
         }
     }
 
+    /**
+     * Conecta el dispositivo
+     *
+     * @param address
+     * @param name
+     */
     public void conectarDevice(String address, String name) {
-        Log.println(Log.ASSERT,"Conectara","ble");
+        Log.println(Log.ASSERT, "Conectara", "ble");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getAdapter().getBluetoothLeScanner().stopScan(scanCallback());
         } else {
             getAdapter().stopLeScan(mLeScanCallback);
         }
-        if(!conexion) {
+        if (!conexion) {
             Intent intent = new Intent(mContext, OximeterActivity.class);
             intent.putExtra(mContext.getString(R.string.address), address);
             intent.putExtra(mContext.getString(R.string.name_device), name);
             mContext.startActivity(intent);
         }
-        if(!conexion)
-        {conexion=true;}
+        if (!conexion) {
+            conexion = true;
+        }
     }
 
     public BluetoothLeService getmBluetoothLeService() {
@@ -107,5 +119,44 @@ public class ControladorBLE {
         this.mBluetoothLeService = mBluetoothLeService;
     }
 
+    /**
+     * Desconecta el dispositivo
+     */
+    public void desconnectar() {
+        if (this.getAdapter() == null || this.getAdapter() == null) {
+            Log.w("BLE", "BluetoothAdapter not initialized");
+            return;
+        }
+        Log.println(Log.ASSERT, "BLE", "Desconexion");
 
+        this.getmBluetoothLeService().disconnect();
+        this.getmBluetoothLeService().close();
+        this.setmBluetoothLeService(null);
+
+    }
+
+    public final Runnable hiloScan = new Runnable() {
+        @Override
+        public void run() {
+            getAdapter().stopLeScan(mLeScanCallback);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getAdapter().getBluetoothLeScanner().startScan(scanCallback());
+                      /*  controladorBLE.getAdapter().getBluetoothLeScanner().startScan(new ScanCallback() {
+                            @Override
+                            public void onScanResult(int callbackType, ScanResult result) {
+                                super.onScanResult(callbackType, result);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    Log.println(Log.ASSERT, "BLE", result.getDevice().getName());
+                                    if (result.getDevice().getName().equalsIgnoreCase(getString(R.string.name_device))) {conectar();}
+                                } else {
+                                    Log.println(Log.ASSERT, "BLE", "Nada");
+                                }
+                            }
+                        });*/
+            }
+        }
+
+        ;
+    };
 }

@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <TextView
+        android:text="@string/mensaje_parametros"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView2"
-            style="@style/text_titulo"
-            android:layout_weight="1" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:id="@+id/textView" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -23,10 +15,10 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="TextView"
+            android:text="@string/SPO2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView"
+            android:id="@+id/txtspo2"
             android:layout_weight="1" />
 
         <EditText
@@ -34,20 +26,19 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
-            android:id="@+id/editText"
+            android:id="@+id/editTextSPO2"
             android:layout_weight="1" />
     </LinearLayout>
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="TextView"
+            android:text="@string/Pulso_Alto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView"
+            android:id="@+id/txtpulsoalto"
             android:layout_weight="1" />
 
         <EditText
@@ -55,20 +46,19 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
-            android:id="@+id/editText"
+            android:id="@+id/editTextPulsoAlto"
             android:layout_weight="1" />
     </LinearLayout>
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="TextView"
+            android:text="@string/Pulso_Bajo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView"
+            android:id="@+id/txtpulsobajo"
             android:layout_weight="1" />
 
         <EditText
@@ -76,8 +66,8 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
-            android:id="@+id/editText"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:id="@+id/editTextPulsoBajo" />
     </LinearLayout>
 
     <LinearLayout
@@ -86,17 +76,17 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:text="Button"
+            android:text="@string/Cancelar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/button4"
+            android:id="@+id/btnCancelarParametros"
             android:layout_weight="1" />
 
         <Button
-            android:text="Button"
+            android:text="@string/Guardar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/button3"
+            android:id="@+id/btnAceptarParametros"
             android:layout_weight="1" />
     </LinearLayout>
 

@@ -27,14 +27,16 @@ public class OximeterActivity extends AppCompatActivity {
     private ServicioRegistro servicio;
     private Oximetria oximetria;
     private TextView txtSPO2, txtPI, txtPulse;
+    private Mensajes mensajes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_oximeter);
-        controladorBLE = new ControladorBLE(this);
-        servicio = new ServicioRegistro(controladorBLE, this);
-        oximetria=new Oximetria();
+        mensajes = new Mensajes(this);
+        controladorBLE = new ControladorBLE(this, mensajes);
+        servicio = new ServicioRegistro(controladorBLE, this, mensajes);
+        oximetria = new Oximetria();
         obtenerExtras();
         cargarVistas();
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
@@ -63,6 +65,11 @@ public class OximeterActivity extends AppCompatActivity {
         //mBluetoothLeService = null;
     }
 
+    @Override
+    public void onBackPressed() {
+    servicio.volverAinicio();
+    }
+
     private void cargarVistas() {
         txtPI = (TextView) findViewById(R.id.txtPI);
         txtPulse = (TextView) findViewById(R.id.txtPulse);
@@ -78,6 +85,7 @@ public class OximeterActivity extends AppCompatActivity {
                 finish();
             }
             Log.println(Log.ASSERT, "BLE", "cONECTANDO");
+
             controladorBLE.getmBluetoothLeService().connect(address);
         }
 
@@ -98,14 +106,14 @@ public class OximeterActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
             } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 Log.println(Log.ASSERT, "BLE", "Desconectado");
-                invalidateOptionsMenu();
+             servicio.volverAinicio();
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 servicio.displayGattServicesService(controladorBLE.getmBluetoothLeService().getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 try {//Limpia salida
                     String recibido = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                     byte[] bytes = intent.getExtras().getByteArray("data");
-                    servicio.tratarDatos(bytes,oximetria,txtSPO2,txtPI,txtPulse);
+                    servicio.tratarDatos(bytes, txtSPO2, txtPI, txtPulse);
                     //Log.println(Log.ASSERT, "BLE", "Datos");
                 } catch (NullPointerException ex) {
                     Log.println(Log.ASSERT, "BLE", ex.toString());

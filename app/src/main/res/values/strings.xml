@@ -26,6 +26,47 @@
     <string name="pulso_bajo">pulso_bajo</string>
     <string name="pulso_alto">pulso_alto</string>
     <string name="emergenciabase">123</string>
+    <string name="titulo_parametros">Parametros</string>
+    <string name="mensaje_parametros">Ingrese los parametros bajo los cuales se generara la alarma</string>
+    <string name="SPO2">SPO2</string>
+    <string name="Pulso_Alto">Pulso Alto</string>
+    <string name="Pulso_Bajo">Pulso Bajo</string>
+    <string name="Guardar">Guardar</string>
+    <string name="Cancelar">Cancelar</string>
+    <string name="Identificacion">Identificacion</string>
+    <string name="Nombres">Nombres</string>
+    <string name="Apellidos">Apellidos</string>
+    <string name="Mis_Nombres">Mis Nombres</string>
+    <string name="Mi_Numero_Identificacion">1030626899</string>
+    <string name="Mis_Apellidos">Mis Apellidos</string>
+    <string name="Descripccion">Descipcción</string>
+    <string name="Mi_Descripccion">Mi Descripccion Medica</string>
+    <string name="data_personal">Ingresa Tus Datos Personales</string>
+    <string name="Otros_Datos">Otros Datos</string>
+    <string name="identificacionPac">identificacionPac</string>
+    <string name="nombresPac">nombresPac</string>
+    <string name="apellidosPac">apellidosPac</string>
+    <string name="descripccionPac">descripccionPac</string>
+    <string name="nacimientoPac">descripccionPac</string>
+    <string name="recurde_llenar_datos">Recuerde Llenar todos los datos</string>
+    <string name="titulo_registre_susdatos">Registre Sus Datos</string>
+    <string name="titulo_tu_nacimiento">Ingresa tu fecha de nacimiento</string>
+    <string name="registro_exitoso">Registro Almacenado en la base de datos</string>
+    <string name="registro_fail">Registro Fallido</string>
+    <string name="oximetria">Oximetria</string>
+    <string name="umbral">Umbral</string>
+    <string name="seleccione">Seleccione la fecha deseada</string>
+    <string name="no_hay_registros">No hay registros en las fechas dadas</string>
+    <string name="imagen_guardada">Imagen Guardada en galeria</string>
+    <string name="imagen_no_guardada">Imagen no guardada</string>
+    <string name="minimo_dos_registros">Se requiere minimo de dos registros para generar la imagen</string>
+
+
+    <!--Base de datos en tiempo real-->
+    <string name="Centro_Medico">Centro Medico</string>
+    <string name="espere">Descargando Datos Espere....</string>
+    <string name="no_encontro_hospital">La clave y el centro medico no coinciden</string>
+    <string name="paciente">Pacientes</string>
 
 
 </resources>
