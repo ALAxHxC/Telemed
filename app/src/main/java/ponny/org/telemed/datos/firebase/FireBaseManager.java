@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -81,7 +82,10 @@ public class FireBaseManager {
                         preferencias.getSPO2(),
                         preferencias.getPulsoBajo(),
                         preferencias.getPulsoAlto(),
-                        preferencias.getNumero1())
+                        preferencias.getNumero1(),
+                        preferencias.getIdCentroMedico(),
+                        FirebaseInstanceId.getInstance().getToken()
+                )
         );
     }
 
@@ -96,7 +100,6 @@ public class FireBaseManager {
                         while (iterable.hasNext()) {
                             //  Log.println(Log.ASSERT, "FBSQL", iterable.next().getValue().toString());
                             listaFirebase.add(iterable.next().getValue(FireBaseEntitys.CentroMedico.class));
-
                         }
                         Log.println(Log.ASSERT, "FB SQL", getListaFirebase().size() + "");
                         mensajes.cancelarDialogos();

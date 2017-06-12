@@ -69,22 +69,22 @@
                 android:layout_height="match_parent">
 
                 <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fbMedico"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:clickable="true"
                     app:fabSize="mini"
-                    app:srcCompat="@drawable/logo"
-                    android:id="@+id/fbMedico"
-                    android:layout_weight="1" />
+                    app:srcCompat="@drawable/logo" />
 
                 <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fbPaciente"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:clickable="true"
                     app:fabSize="mini"
-                    app:srcCompat="@drawable/paciente"
-                    android:id="@+id/fbPaciente"
-                    android:layout_weight="1" />
+                    app:srcCompat="@drawable/paciente" />
             </LinearLayout>
 
         </LinearLayout>

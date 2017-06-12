@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         mensajes.generarDialogoPacienteInicial();
         controladorBLE = new ControladorBLE(this, mLeScanCallback, mensajes);
         controladorBLE.validarConexionBlueetooth();
-        oximetriaBDController = new OximetriaBDController(this);
+      oximetriaBDController = new OximetriaBDController(this);
 
         try {
             Log.println(Log.ASSERT, "BD", "Cantidad Registros" + oximetriaBDController.cargarRegistros().size());
@@ -67,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
         }
         iniciarRed();
         btnBuscar();
-        activarBluetooth();
+
+         activarBluetooth();
 
 
     }
@@ -122,9 +123,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        activarBluetooth();
-
-
+        //activarBluetooth();
     }
 
 
@@ -136,10 +135,14 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Log.println(Log.ASSERT, "BLE", device.getName());
-                            if (device.getName().equalsIgnoreCase(getString(R.string.name_device))) {
-                                controladorBLE.conectarDevice(device.getAddress(), device.getName());
-                            }
+                            try {
+                                Log.println(Log.ASSERT, "BLE", device.getName());
+
+                                if (device.getName().equalsIgnoreCase(getString(R.string.name_device))) {
+                                    controladorBLE.conectarDevice(device.getAddress(), device.getName());
+                                }
+                            }catch (NullPointerException ex)
+                            {ex.printStackTrace();}
                         }
                     });
                 }

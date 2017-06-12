@@ -43,7 +43,7 @@ public class Preferencias {
             editor.putInt(context.getString(R.string.pulso_alto), context.getResources().getInteger(R.integer.pulso_alto));
             cargarPreferenciasPaciente(editor);
             editor.commit();
-            debeCrear=true;
+            debeCrear = true;
         } else {
             debeCrear = false;
         }
@@ -62,7 +62,7 @@ public class Preferencias {
             editor.putString(context.getString(R.string.nombresPac), null);
             editor.putString(context.getString(R.string.apellidosPac), null);
             editor.putString(context.getString(R.string.nacimientoPac), null);
- //           editor.putString(context.getString(R.string.nacimientoPac), null);
+            //           editor.putString(context.getString(R.string.nacimientoPac), null);
 
         }
     }
@@ -79,6 +79,7 @@ public class Preferencias {
 
     }
 
+
     /**
      * Devuelve el numero del paciente
      *
@@ -90,6 +91,7 @@ public class Preferencias {
 
     /**
      * Guarda el spo2 del paciente
+     *
      * @param spo2
      */
     public void setSPO2(int spo2) {
@@ -100,6 +102,7 @@ public class Preferencias {
 
     /**
      * Devuelve el niuvel de oximetria
+     *
      * @return
      */
     public int getSPO2() {
@@ -108,6 +111,7 @@ public class Preferencias {
 
     /**
      * Guarda Pulso bajo en el sistema
+     *
      * @param pulsoBajo
      */
     public void setPulsoBajo(int pulsoBajo) {
@@ -118,6 +122,7 @@ public class Preferencias {
 
     /**
      * Deuvelve el puslo bajo del paciente
+     *
      * @return
      */
     public int getPulsoBajo() {
@@ -126,6 +131,7 @@ public class Preferencias {
 
     /**
      * Ingresa Pulso Alto del paciente
+     *
      * @param pulsoAlto
      */
     public void setPulsoAlto(int pulsoAlto) {
@@ -136,6 +142,7 @@ public class Preferencias {
 
     /**
      * Devuelve puslo alto del paciente
+     *
      * @return
      */
     public int getPulsoAlto() {
@@ -159,8 +166,8 @@ public class Preferencias {
         editor.putString(context.getString(R.string.identificacionPac), identificacion);
         editor.commit();
     }
-    public String getIdentificacionPaciente()
-    {
+
+    public String getIdentificacionPaciente() {
         return preferences.getString(context.getString(R.string.identificacionPac), null);
     }
 
@@ -196,6 +203,15 @@ public class Preferencias {
         editor.commit();
 
     }
+    public void setIdCentroMedico(int centroMedico)
+    {  SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(context.getString(R.string.id_centro_medico), centroMedico);
+        editor.commit();
+    }
+    public int getIdCentroMedico() {
+        return preferences.getInt(context.getString(R.string.id_centro_medico), 0);
+    }
+
 
 
 }

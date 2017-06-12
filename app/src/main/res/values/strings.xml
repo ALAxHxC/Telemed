@@ -67,6 +67,7 @@
     <string name="espere">Descargando Datos Espere....</string>
     <string name="no_encontro_hospital">La clave y el centro medico no coinciden</string>
     <string name="paciente">Pacientes</string>
+    <string name="id_centro_medico">idCentroMedico</string>
 
 
 </resources>

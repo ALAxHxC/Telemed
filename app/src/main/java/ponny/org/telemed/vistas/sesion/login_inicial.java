@@ -36,7 +36,7 @@ public class Login_inicial extends AppCompatActivity {
         fireBaseManager.cargarCentrosMedicos(this);
         mensajes = new Mensajes(this);
         preferencias = new Preferencias(this);
-     if (!Preferencias.debeCrear) {
+        if (!Preferencias.debeCrear) {
             iniciarPaciente();
         }
         cargarVistas();
@@ -92,7 +92,7 @@ public class Login_inicial extends AppCompatActivity {
                 if (respuesta == 0) {
                     mensajes.Toast(getString(R.string.no_encontro_hospital));
                 } else {
-
+                    preferencias.setIdCentroMedico(respuesta);
                     iniciarPaciente();
 
                 }

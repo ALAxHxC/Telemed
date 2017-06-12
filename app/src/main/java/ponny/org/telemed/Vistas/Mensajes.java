@@ -249,7 +249,6 @@ public class Mensajes {
         final EditText identificacion = (EditText) dialogo.findViewById(R.id.editTextIdentificacion);
         final EditText nombres = (EditText) dialogo.findViewById(R.id.editTextNombres);
         final EditText apellidos = (EditText) dialogo.findViewById(R.id.editTextApellidos);
-
         final EditText descripccion = (EditText) dialogo.findViewById(R.id.editTextDescripccion);
         FloatingActionButton btnGuardarDatos = (FloatingActionButton) dialogo.findViewById(R.id.floatingActionButtonNextPaciente);
         btnGuardarDatos.setOnClickListener(new View.OnClickListener() {

@@ -112,13 +112,6 @@
         android:gravity="center">
 
 
-        <TextView
-            android:text="@string/Otros_Datos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView11"
-            android:layout_weight="1"
-            android:gravity="center" />
     </LinearLayout>
 
     <LinearLayout

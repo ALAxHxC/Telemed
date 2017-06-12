@@ -1,5 +1,7 @@
 package ponny.org.telemed.negocio;
 
+import android.util.Log;
+
 import java.util.List;
 
 /**
@@ -29,6 +31,7 @@ public class CentroMedicoNegocio {
         for (FireBaseEntitys.CentroMedico cn : centroMedicos) {
 
             if (cn.getNombre().equalsIgnoreCase(centroMedico) && cn.getClavePaciente().equalsIgnoreCase(clave)) {
+                Log.println(Log.ASSERT, "FBSQL", cn.getNombre() + cn.getId());
                 return cn.getId();
             }
 

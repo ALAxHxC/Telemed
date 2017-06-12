@@ -1,5 +1,7 @@
 package ponny.org.telemed.negocio;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
 import java.util.List;
 
 /**
@@ -56,6 +58,7 @@ public class FireBaseEntitys {
         public void setNombre(String nombre) {
             this.nombre = nombre;
         }
+
     }
 
     public static class Paciente {
@@ -66,12 +69,14 @@ public class FireBaseEntitys {
         int puslobajo;
         int pusloalto;
         String numeropaciente;
+        int centromedico;
+        String idFcm;
 
         public Paciente() {
 
         }
 
-        public Paciente(String identificacion, String nombres, String apellidos, int spo2, int puslobajo, int pusloalto, String numeropaciente) {
+        public Paciente(String identificacion, String nombres, String apellidos, int spo2, int puslobajo, int pusloalto, String numeropaciente, int centromedico, String idFcm) {
             this.identificacion = identificacion;
             this.nombres = nombres;
             this.apellidos = apellidos;
@@ -79,6 +84,8 @@ public class FireBaseEntitys {
             this.puslobajo = puslobajo;
             this.pusloalto = pusloalto;
             this.numeropaciente = numeropaciente;
+            this.centromedico = centromedico;
+            this.idFcm=idFcm;
         }
 
         public String getIdentificacion() {
@@ -135,6 +142,22 @@ public class FireBaseEntitys {
 
         public void setNumeropaciente(String numeropaciente) {
             this.numeropaciente = numeropaciente;
+        }
+
+        public int getCentromedico() {
+            return centromedico;
+        }
+
+        public void setCentromedico(int centromedico) {
+            this.centromedico = centromedico;
+        }
+
+        public String getIdFcm() {
+            return idFcm;
+        }
+
+        public void setIdFcm(String idFcm) {
+            this.idFcm = idFcm;
         }
     }
 }
