@@ -56,6 +56,11 @@ public class Mensajes {
             Log.println(Log.ASSERT, "BD", preferencias.getApellidosPaciente());*/
         }
     }
+    public void generarDialogoMedicoInicial(){
+        if(Preferencias.debeCrear){
+            generarDialogoDatosMedico(context.getString(R.string.titulo_registre_susdatos));
+        }
+    }
 
     public void mostrarDialogo() {
         progressDialog = new ProgressDialog(context, R.style.AppTheme);
@@ -224,7 +229,19 @@ public class Mensajes {
         });
 
     }
-
+    /**
+     * Crea un dialogo del medico
+     *
+     * @param titulo titulo del dialogo
+     * @return dialogo
+     */
+    public Dialog cargarDialogoDatosMedico(String titulo) {
+        Dialog dialogo = new Dialog(context);
+        dialogo.setContentView(R.layout.dialogo_medico);
+        dialogo.setTitle(titulo);
+        dialogo.setCancelable(false);
+        return dialogo;
+    }
     /**
      * Crea un dialogo del pacieiente
      *
@@ -239,6 +256,42 @@ public class Mensajes {
         return dialogo;
     }
 
+    /**
+     * Crea dialogo para el medico
+     * @param titulo
+     */
+    public void generarDialogoDatosMedico(String titulo){
+        final Dialog dialogo = cargarDialogoDatosMedico(titulo);
+        final EditText identificacion = (EditText) dialogo.findViewById(R.id.editTextIdentificacion);
+        final EditText nombres = (EditText) dialogo.findViewById(R.id.editTextNombres);
+        final EditText apellidos = (EditText) dialogo.findViewById(R.id.editTextApellidos);
+        FloatingActionButton btnGuardarDatos = (FloatingActionButton) dialogo.findViewById(R.id.floatingActionButtonNextPaciente);
+        btnGuardarDatos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+
+                    if (validarTextosPaciente(identificacion, nombres, apellidos)) {
+                        preferencias.seIdentificacionPaciente(identificacion.getText().toString());
+                        preferencias.setNamePaciente(nombres.getEditableText().toString());
+                        preferencias.setApellidosPaciente(apellidos.getEditableText().toString());
+                        Log.println(Log.ASSERT,"FB","Va a subir");
+                        fireBaseManager.subirMedico();
+                        dialogo.dismiss();
+
+                    } else {
+                        Toast(context.getString(R.string.recurde_llenar_datos));
+
+                    }
+                } catch (NullPointerException ex) {
+                    Toast(context.getString(R.string.recurde_llenar_datos));
+                    ex.printStackTrace();
+                }
+            }
+        });
+        dialogo.show();
+
+    }
     /**
      * Configura y muestra el dialogo del paciente
      *
@@ -376,7 +429,7 @@ public class Mensajes {
         Log.println(Log.ASSERT, "BD", "Cantidad de argumentos" + args.length);
         if (args.length > 0)
             for (EditText texto : args) {
-                if (texto.getText().toString().isEmpty() || texto.getText().toString().length() <= 4) {
+                if (texto.getText().toString().isEmpty() || texto.getText().toString().length() <= 3) {
                     return false;
                 }
             }
@@ -398,7 +451,6 @@ public class Mensajes {
             }
         });
     }
-
 
     public Preferencias getPreferencias() {
         return preferencias;

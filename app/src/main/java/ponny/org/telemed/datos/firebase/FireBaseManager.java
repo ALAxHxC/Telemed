@@ -1,8 +1,10 @@
 package ponny.org.telemed.datos.firebase;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +37,7 @@ public class FireBaseManager {
     Context context;
     private Mensajes mensajes;
     private List<FireBaseEntitys.CentroMedico> listaFirebase;
+    private Preferencias preferencias;
 
     public FireBaseManager(Context context) {
         this.context = context;
@@ -42,6 +45,7 @@ public class FireBaseManager {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         listaFirebase = new ArrayList<>();
         mensajes = new Mensajes(context);
+        this.preferencias = new Preferencias(context);
         //      subirCentrosMedicos();
         // subirPaciente();
     }
@@ -52,6 +56,7 @@ public class FireBaseManager {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         listaFirebase = new ArrayList<>();
         this.mensajes = mensajes;
+        this.preferencias = new Preferencias(context);
         //      subirCentrosMedicos();
         // subirPaciente();
     }
@@ -67,6 +72,42 @@ public class FireBaseManager {
         lista.add(new FireBaseEntitys.CentroMedico(5, "sha1234", "sha1234", "Tu familia"));
         lista.add(new FireBaseEntitys.CentroMedico(6, "sha1234", "sha1234", "Colsubsidio"));
         mDatabase.child(context.getString(R.string.Centro_Medico)).setValue(lista);
+    }
+
+    public void subirMedico() {
+
+        mDatabase.child(context.getString(R.string.Centro_Medico)).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int i = 0;
+                        Iterator<DataSnapshot> iterable = dataSnapshot.getChildren().iterator();
+                        while (iterable.hasNext()) {
+                          // Log.println(Log.ASSERT, "FBSQL", iterable.next().getValue().toString());
+                            FireBaseEntitys.CentroMedico centroMedico = (iterable.next().getValue(FireBaseEntitys.CentroMedico.class));
+                            Log.println(Log.ASSERT, "FBSQL",centroMedico.getNombre());
+                            if (centroMedico.getId() == preferencias.getIdCentroMedico()) {
+                                mDatabase.child(context.getString(R.string.Centro_Medico))
+                                        .child(i + "").child(context.getString(R.string.medico))
+                                        .child(preferencias.getIdentificacionPaciente())
+                                        .setValue(new FireBaseEntitys.Medico(
+                                                preferencias.getIdentificacionPaciente(),
+                                                preferencias.getNombrePaciente(),
+                                                preferencias.getApellidosPaciente(),
+                                                FirebaseInstanceId.getInstance().getToken()));
+                                return;
+
+                            }
+                            i++;
+                            Log.println(Log.ASSERT, "FIREBASE", "REGISTRO MEDICO");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        mensajes.finshApp(context.getString(R.string.error),context.getString(R.string.sin_conexion));
+                    }
+                });
     }
 
     private void subirPaciente() {

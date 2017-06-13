@@ -41,6 +41,7 @@ public class Preferencias {
             editor.putInt(context.getString(R.string.spo2), context.getResources().getInteger(R.integer.spo2_base));
             editor.putInt(context.getString(R.string.pulso_bajo), context.getResources().getInteger(R.integer.puslo_bajo));
             editor.putInt(context.getString(R.string.pulso_alto), context.getResources().getInteger(R.integer.pulso_alto));
+
             cargarPreferenciasPaciente(editor);
             editor.commit();
             debeCrear = true;
@@ -62,6 +63,7 @@ public class Preferencias {
             editor.putString(context.getString(R.string.nombresPac), null);
             editor.putString(context.getString(R.string.apellidosPac), null);
             editor.putString(context.getString(R.string.nacimientoPac), null);
+            editor.putBoolean(context.getString(R.string.isMedico),false);
             //           editor.putString(context.getString(R.string.nacimientoPac), null);
 
         }
@@ -210,6 +212,14 @@ public class Preferencias {
     }
     public int getIdCentroMedico() {
         return preferences.getInt(context.getString(R.string.id_centro_medico), 0);
+    }
+    public boolean isMedico(){
+        return preferences.getBoolean(context.getString(R.string.isMedico),false);
+    }
+    public void setIsMedico(boolean bool){
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(context.getString(R.string.isMedico), bool);
+        editor.commit();
     }
 
 

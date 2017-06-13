@@ -36,12 +36,19 @@ public class Login_inicial extends AppCompatActivity {
         fireBaseManager.cargarCentrosMedicos(this);
         mensajes = new Mensajes(this);
         preferencias = new Preferencias(this);
-        if (!Preferencias.debeCrear) {
-            iniciarPaciente();
-        }
         cargarVistas();
         cargarMedico();
         cargarPaciente();
+        if(preferencias.isMedico()){
+        Log.println(Log.ASSERT,"es medico","medico");
+            iniciarMedico();
+            return;
+        }
+        if (!Preferencias.debeCrear) {
+            iniciarPaciente();
+        }
+
+
         //  Log.println(Log.ASSERT, "FB SQL", fireBaseManager.getListaFirebase().size() + "");
 
     }
@@ -64,7 +71,6 @@ public class Login_inicial extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, hospitales);
         spHospitales.setAdapter(adapter);
-
     }
 
     private void cargarMedico() {
@@ -75,9 +81,9 @@ public class Login_inicial extends AppCompatActivity {
                 if (respuesta == 0) {
                     mensajes.Toast(getString(R.string.no_encontro_hospital));
                 } else {
-
+                    preferencias.setIdCentroMedico(respuesta);
+                    preferencias.setIsMedico(true);
                     iniciarMedico();
-
                 }
             }
         });
