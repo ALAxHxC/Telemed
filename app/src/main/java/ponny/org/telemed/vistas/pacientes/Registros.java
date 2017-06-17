@@ -1,4 +1,4 @@
-package ponny.org.telemed.vistas;
+package ponny.org.telemed.vistas.pacientes;
 
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -31,6 +31,7 @@ import ponny.org.telemed.R;
 import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.datos.basededatos.OximetriaBDController;
 import ponny.org.telemed.negocio.Oximetria;
+import ponny.org.telemed.vistas.Mensajes;
 
 import static android.R.attr.data;
 import static ponny.org.telemed.utilidades.Utilidades.sdf;

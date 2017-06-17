@@ -16,13 +16,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import ponny.org.telemed.R;
 import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.datos.firebase.FireBaseManager;
+import ponny.org.telemed.vistas.manager.ActividadesManager;
+import ponny.org.telemed.vistas.pacientes.Registros;
 
 
 /**
@@ -35,21 +33,31 @@ public class Mensajes {
     private Preferencias preferencias;
     private ProgressDialog progressDialog;
     private FireBaseManager fireBaseManager;
+    private ActividadesManager actividadesManager;
 
     /**
      * @param context Actividad
      */
+    public Mensajes(Context context,Preferencias preferencias,FireBaseManager fireBaseManager) {
+        this.context = context;
+        this.preferencias = preferencias;
+        this.fireBaseManager = fireBaseManager;
+        this.actividadesManager=new ActividadesManager(context);
+
+    }
     public Mensajes(Context context) {
         this.context = context;
-        preferencias = new Preferencias(context);
-        fireBaseManager = new FireBaseManager(context,this);
+        this.preferencias = new Preferencias(context);
+        this.fireBaseManager = new FireBaseManager(context,preferencias);
+        this.actividadesManager=new ActividadesManager(context);
 
     }
 
     public void generarDialogoPacienteInicial() {
-        if (Preferencias.debeCrear) {
+        if (preferencias.getDebeCrear()) {
             generarDialogoDatosPaciente(context.getString(R.string.titulo_registre_susdatos));
         } else {
+            actividadesManager.irPacienteMain();
       /*      Log.println(Log.ASSERT, "BD", "Fecha:" + preferencias.getNacimientPaciente());
             Log.println(Log.ASSERT, "BD", preferencias.getNombrePaciente());
             Log.println(Log.ASSERT, "BD", preferencias.getDescripccionPaciente());
@@ -57,8 +65,10 @@ public class Mensajes {
         }
     }
     public void generarDialogoMedicoInicial(){
-        if(Preferencias.debeCrear){
+        if(preferencias.getDebeCrear()){
             generarDialogoDatosMedico(context.getString(R.string.titulo_registre_susdatos));
+        }else{
+            actividadesManager.irMedicoMain();
         }
     }
 
@@ -145,16 +155,18 @@ public class Mensajes {
         builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //Registradno numeros
                         registrarNumero1(input.getText().toString());
-                        fireBaseManager.cargarPaciente(preferencias);
+                      //  fireBaseManager.subirPaciente();
                     }
                 }
         );
         builder.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //Registrando numeros
                         dialog.cancel();
-                        fireBaseManager.cargarPaciente(preferencias);
+                     //   fireBaseManager.subirPaciente();
                     }
                 }
         );
@@ -192,12 +204,10 @@ public class Mensajes {
         TextView pulsoalto = (TextView) dialogo.findViewById(R.id.editTextPulsoBajo);
         Button guardar = (Button) dialogo.findViewById(R.id.btnAceptarParametros);
         Button cancelar = (Button) dialogo.findViewById(R.id.btnCancelarParametros);
-        cancelarDialogo(cancelar, dialogo);
-        guardarParametros(guardar, dialogo, spo2, pulsoalto, pulsobajo, llamaNumero);
         spo2.setText(preferencias.getSPO2() + "");
         pulsoalto.setText(preferencias.getPulsoAlto() + "");
         pulsobajo.setText(preferencias.getPulsoBajo() + "");
-
+        guardarParametros(guardar,cancelar, dialogo, spo2, pulsoalto, pulsobajo, llamaNumero);
         dialogo.show();
         dialogo.setCancelable(false);
     }
@@ -212,19 +222,24 @@ public class Mensajes {
      * @param pulsobajo    pulso bajo del paciente
      * @param llamanumeros indica si se debe llamar la alerta de numero ( solo para el primero inicio de la aplicacion)
      */
-    private void guardarParametros(Button button, final Dialog dialog, final TextView spo2, final TextView pulsoalto, final TextView pulsobajo, final boolean llamanumeros) {
+    private void guardarParametros(Button button,Button cancelar, final Dialog dialog, final TextView spo2, final TextView pulsoalto, final TextView pulsobajo, final boolean llamanumeros) {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 preferencias.setSPO2(Integer.parseInt(spo2.getText().toString()));
                 preferencias.setPulsoAlto(Integer.parseInt(pulsoalto.getText().toString()));
                 preferencias.setPulsoBajo(Integer.parseInt(pulsobajo.getText().toString()));
-                fireBaseManager.cargarPaciente(preferencias);
+               fireBaseManager.subirPaciente();
                 dialog.dismiss();
-                if (llamanumeros) {
-                    registrarNumero(context.getString(R.string.titulo_numero), context.getString(R.string.cuerpo_numero));
 
-                }
+            }
+        });
+        cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fireBaseManager.subirPaciente();
+                dialog.dismiss();
+
             }
         });
 
@@ -276,7 +291,7 @@ public class Mensajes {
                         preferencias.setNamePaciente(nombres.getEditableText().toString());
                         preferencias.setApellidosPaciente(apellidos.getEditableText().toString());
                         Log.println(Log.ASSERT,"FB","Va a subir");
-                        fireBaseManager.subirMedico();
+                        fireBaseManager.subirMedico( );
                         dialogo.dismiss();
 
                     } else {
@@ -458,5 +473,13 @@ public class Mensajes {
 
     public void setPreferencias(Preferencias preferencias) {
         this.preferencias = preferencias;
+    }
+
+    public ActividadesManager getActividadesManager() {
+        return actividadesManager;
+    }
+
+    public void setActividadesManager(ActividadesManager actividadesManager) {
+        this.actividadesManager = actividadesManager;
     }
 }

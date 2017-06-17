@@ -8,7 +8,7 @@ import java.util.List;
  * Created by Daniel on 30/01/2017.
  */
 
-public class FireBaseEntitys {
+public class EntidadesFireBase {
 
 
     public static class CentroMedico {
@@ -71,12 +71,12 @@ public class FireBaseEntitys {
         String numeropaciente;
         int centromedico;
         String idFcm;
-
+        String descripccion;
         public Paciente() {
 
         }
 
-        public Paciente(String identificacion, String nombres, String apellidos, int spo2, int puslobajo, int pusloalto, String numeropaciente, int centromedico, String idFcm) {
+        public Paciente(String identificacion, String nombres, String apellidos, int spo2, int puslobajo, int pusloalto, String numeropaciente, int centromedico, String idFcm, String descripccion) {
             this.identificacion = identificacion;
             this.nombres = nombres;
             this.apellidos = apellidos;
@@ -86,6 +86,7 @@ public class FireBaseEntitys {
             this.numeropaciente = numeropaciente;
             this.centromedico = centromedico;
             this.idFcm=idFcm;
+            this.descripccion=descripccion;
         }
 
         public String getIdentificacion() {
@@ -159,18 +160,32 @@ public class FireBaseEntitys {
         public void setIdFcm(String idFcm) {
             this.idFcm = idFcm;
         }
+
+        public String getDescripccion() {
+            return descripccion;
+        }
+
+        public void setDescripccion(String descripccion) {
+            this.descripccion = descripccion;
+        }
+
+        public String toStringMedico() {
+        return " "+spo2+" "+pusloalto+" "+puslobajo;
+        }
     }
     public static class Medico{
         String identificacion;
         String nombres;
         String apellidos;
         String fcm;
+        int centroMedico;
 
-        public Medico(String identificacion, String nombres, String apellidos,String fcm) {
+        public Medico(String identificacion, String nombres, String apellidos,String fcm, int centroMedico) {
             this.identificacion = identificacion;
             this.nombres = nombres;
             this.apellidos = apellidos;
             this.fcm = fcm;
+            this.centroMedico=centroMedico;
         }
 
         public Medico() {
@@ -206,6 +221,14 @@ public class FireBaseEntitys {
 
         public void setFcm(String fcm) {
             this.fcm = fcm;
+        }
+
+        public int getCentroMedico() {
+            return centroMedico;
+        }
+
+        public void setCentroMedico(int centroMedico) {
+            this.centroMedico = centroMedico;
         }
     }
 }

@@ -34,14 +34,14 @@ public class Preferencias {
      * Carga las preferencias en el sistema
      */
     public void cargarPreferencias() {
-        if ((preferences.getString(context.getString(R.string.identificacionPac), null) == null)) {
+        if (getDebeCrear()) {
             Log.println(Log.ASSERT, "TEL", "CREA PREFERENCIAS");
             SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(context.getString(R.string.debe_crear), true);
             editor.putString(context.getString(R.string.emergencia_numero1), context.getString(R.string.emergenciabase));
             editor.putInt(context.getString(R.string.spo2), context.getResources().getInteger(R.integer.spo2_base));
             editor.putInt(context.getString(R.string.pulso_bajo), context.getResources().getInteger(R.integer.puslo_bajo));
             editor.putInt(context.getString(R.string.pulso_alto), context.getResources().getInteger(R.integer.pulso_alto));
-
             cargarPreferenciasPaciente(editor);
             editor.commit();
             debeCrear = true;
@@ -64,6 +64,7 @@ public class Preferencias {
             editor.putString(context.getString(R.string.apellidosPac), null);
             editor.putString(context.getString(R.string.nacimientoPac), null);
             editor.putBoolean(context.getString(R.string.isMedico),false);
+            editor.putInt(context.getString(R.string.listaCentroMedico),-1);
             //           editor.putString(context.getString(R.string.nacimientoPac), null);
 
         }
@@ -217,11 +218,30 @@ public class Preferencias {
         return preferences.getBoolean(context.getString(R.string.isMedico),false);
     }
     public void setIsMedico(boolean bool){
+        Log.println(Log.ASSERT,"Registraando medico ",bool+"");
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(context.getString(R.string.isMedico), bool);
         editor.commit();
     }
+    public void setListaCentroMedicoId(int id){
 
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(context.getString(R.string.listaCentroMedico), id);
+        editor.commit();
+    }
+    public int getListaCentroMedicoId() {
+        return preferences.getInt(context.getString(R.string.listaCentroMedico), -1);
+    }
+    public void setDebeCrear(boolean bool){
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(context.getString(R.string.debe_crear), bool);
+        editor.commit();
+
+    }
+
+    public boolean getDebeCrear(){
+        return preferences.getBoolean(context.getString(R.string.debe_crear), true);
+    }
 
 
 }

@@ -73,6 +73,8 @@
     <string name="medico">medico</string>
     <string name="error">Error</string>
     <string name="sin_conexion">Sin conexion, intente mas tarde</string>
+    <string name="listaCentroMedico">listaCentroMedico</string>
+    <string name="debe_crear">Debe crear</string>
 
 
 </resources>

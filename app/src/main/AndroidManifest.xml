@@ -22,8 +22,8 @@
             android:name=".servicios.bluetooth.BluetoothLeService"
             android:enabled="true" />
 
-        <activity android:name=".vistas.MainActivity"></activity>
-        <activity android:name=".vistas.OximeterActivity" />
+        <activity android:name=".vistas.pacientes.MainActivity"></activity>
+        <activity android:name=".vistas.pacientes.OximeterActivity" />
 
         <receiver
             android:name=".red.internet.CamioDeEstadoRed"
@@ -34,7 +34,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".vistas.Registros" />
+        <activity android:name=".vistas.pacientes.Registros" />
 
         <service android:name=".servicios.firebase.mensajes.FirebaseMessagingService">
             <intent-filter>
@@ -50,7 +50,6 @@
         <activity android:name=".vistas.sesion.Login_inicial">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

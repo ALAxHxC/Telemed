@@ -12,7 +12,7 @@ import android.util.Log;
 
 import ponny.org.telemed.R;
 import ponny.org.telemed.vistas.Mensajes;
-import ponny.org.telemed.vistas.OximeterActivity;
+import ponny.org.telemed.vistas.pacientes.OximeterActivity;
 import ponny.org.telemed.servicios.bluetooth.BluetoothLeService;
 
 /**

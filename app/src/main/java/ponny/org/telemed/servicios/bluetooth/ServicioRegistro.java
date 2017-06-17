@@ -20,7 +20,7 @@ import ponny.org.telemed.red.bluetooth.ControladorBLE;
 import ponny.org.telemed.red.celular.Llamada;
 import ponny.org.telemed.red.celular.SimGSM;
 import ponny.org.telemed.red.celular.Sms;
-import ponny.org.telemed.vistas.MainActivity;
+import ponny.org.telemed.vistas.pacientes.MainActivity;
 import ponny.org.telemed.vistas.Mensajes;
 
 /**

@@ -1,4 +1,4 @@
-package ponny.org.telemed.vistas;
+package ponny.org.telemed.vistas.pacientes;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -18,6 +18,7 @@ import ponny.org.telemed.red.celular.SimGSM;
 import ponny.org.telemed.red.celular.Sms;
 import ponny.org.telemed.servicios.bluetooth.BluetoothLeService;
 import ponny.org.telemed.servicios.bluetooth.ServicioRegistro;
+import ponny.org.telemed.vistas.Mensajes;
 
 
 public class OximeterActivity extends AppCompatActivity {

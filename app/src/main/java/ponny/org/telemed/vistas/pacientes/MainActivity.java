@@ -1,4 +1,4 @@
-package ponny.org.telemed.vistas;
+package ponny.org.telemed.vistas.pacientes;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -17,16 +17,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import ponny.org.telemed.R;
-import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.datos.basededatos.OximetriaBDController;
-import ponny.org.telemed.datos.firebase.FireBaseManager;
 import ponny.org.telemed.red.bluetooth.ControladorBLE;
 import ponny.org.telemed.red.celular.SimGSM;
 import ponny.org.telemed.red.internet.AccesoInternet;
-import ponny.org.telemed.servicios.bluetooth.BluetoothLeService;
+import ponny.org.telemed.vistas.Mensajes;
 
 import static ponny.org.telemed.red.internet.CamioDeEstadoRed.internet;
 
@@ -39,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private static final long SCAN_PERIOD = 100000;
     private Mensajes mensajes;
     private OximetriaBDController oximetriaBDController;
-   // private FireBaseManager fireBaseManager;
+    // private FireBaseManager fireBaseManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
         mHandlerScan = new Handler();
         mensajes = new Mensajes(this);
-        mensajes.generarDialogoPacienteInicial();
         controladorBLE = new ControladorBLE(this, mLeScanCallback, mensajes);
         controladorBLE.validarConexionBlueetooth();
-      oximetriaBDController = new OximetriaBDController(this);
+        oximetriaBDController = new OximetriaBDController(this);
 
         try {
             Log.println(Log.ASSERT, "BD", "Cantidad Registros" + oximetriaBDController.cargarRegistros().size());
@@ -68,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         iniciarRed();
         btnBuscar();
 
-         activarBluetooth();
+        activarBluetooth();
 
 
     }
@@ -141,8 +137,9 @@ public class MainActivity extends AppCompatActivity {
                                 if (device.getName().equalsIgnoreCase(getString(R.string.name_device))) {
                                     controladorBLE.conectarDevice(device.getAddress(), device.getName());
                                 }
-                            }catch (NullPointerException ex)
-                            {ex.printStackTrace();}
+                            } catch (NullPointerException ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     });
                 }
@@ -187,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         btnEscan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-          //      fireBaseManager.cargarPaciente(MainActivity.this, mensajes.getPreferencias());
+                //      fireBaseManager.cargarPaciente(MainActivity.this, mensajes.getPreferencias());
                 scanearDispositivo(true);
             }
         });

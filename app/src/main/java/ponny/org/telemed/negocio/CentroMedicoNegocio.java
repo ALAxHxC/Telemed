@@ -10,14 +10,14 @@ import java.util.List;
 
 public class CentroMedicoNegocio {
     private int id;
-    private List<FireBaseEntitys.CentroMedico> centroMedicos;
+    private List<EntidadesFireBase.CentroMedico> centroMedicos;
 
-    public CentroMedicoNegocio(List<FireBaseEntitys.CentroMedico> centroMedicos) {
+    public CentroMedicoNegocio(List<EntidadesFireBase.CentroMedico> centroMedicos) {
         this.centroMedicos = centroMedicos;
     }
 
     public int buscarCentroMedicoMedico(String centroMedico, String clave) {
-        for (FireBaseEntitys.CentroMedico cn : centroMedicos) {
+        for (EntidadesFireBase.CentroMedico cn : centroMedicos) {
 
             if (cn.getNombre().equalsIgnoreCase(centroMedico) && cn.getClaveMedico().equalsIgnoreCase(clave)) {
                 return cn.getId();
@@ -28,7 +28,7 @@ public class CentroMedicoNegocio {
     }
 
     public int buscarCentroMedicoPaciente(String centroMedico, String clave) {
-        for (FireBaseEntitys.CentroMedico cn : centroMedicos) {
+        for (EntidadesFireBase.CentroMedico cn : centroMedicos) {
 
             if (cn.getNombre().equalsIgnoreCase(centroMedico) && cn.getClavePaciente().equalsIgnoreCase(clave)) {
                 Log.println(Log.ASSERT, "FBSQL", cn.getNombre() + cn.getId());

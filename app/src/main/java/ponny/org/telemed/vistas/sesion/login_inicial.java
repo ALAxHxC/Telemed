@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -15,9 +14,9 @@ import ponny.org.telemed.R;
 import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.datos.firebase.FireBaseManager;
 import ponny.org.telemed.negocio.CentroMedicoNegocio;
-import ponny.org.telemed.vistas.MainActivity;
+import ponny.org.telemed.vistas.manager.ActividadesManager;
+import ponny.org.telemed.vistas.pacientes.MainActivity;
 import ponny.org.telemed.vistas.Mensajes;
-import ponny.org.telemed.vistas.medicos.MainActivityMedico;
 
 public class Login_inicial extends AppCompatActivity {
     private FireBaseManager fireBaseManager;
@@ -27,30 +26,32 @@ public class Login_inicial extends AppCompatActivity {
     private CentroMedicoNegocio centroMedicoNegocio;
     private Mensajes mensajes;
     private Preferencias preferencias;
+    private ActividadesManager actividadesManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_inicial);
-        fireBaseManager = new FireBaseManager(this);
-        fireBaseManager.cargarCentrosMedicos(this);
-        mensajes = new Mensajes(this);
         preferencias = new Preferencias(this);
+        fireBaseManager = new FireBaseManager(this, preferencias);
+        fireBaseManager.cargarCentrosMedicos(this);
+        mensajes = new Mensajes(this, preferencias, fireBaseManager);
+        actividadesManager = new ActividadesManager(this);
         cargarVistas();
         cargarMedico();
         cargarPaciente();
-        if(preferencias.isMedico()){
-        Log.println(Log.ASSERT,"es medico","medico");
-            iniciarMedico();
-            return;
+        Log.println(Log.ASSERT, "Cargando datos", "Cargando datos");
+
+        if (!preferencias.getDebeCrear()) {
+            if (preferencias.isMedico()) {
+                Log.println(Log.ASSERT, "es medico", "medico");
+                actividadesManager.irMedicoMain();
+                return;
+            } else {
+                actividadesManager.irPacienteMain();
+                return;
+            }
         }
-        if (!Preferencias.debeCrear) {
-            iniciarPaciente();
-        }
-
-
-        //  Log.println(Log.ASSERT, "FB SQL", fireBaseManager.getListaFirebase().size() + "");
-
     }
 
     private void cargarVistas() {
@@ -81,9 +82,9 @@ public class Login_inicial extends AppCompatActivity {
                 if (respuesta == 0) {
                     mensajes.Toast(getString(R.string.no_encontro_hospital));
                 } else {
-                    preferencias.setIdCentroMedico(respuesta);
                     preferencias.setIsMedico(true);
-                    iniciarMedico();
+                    preferencias.setIdCentroMedico(respuesta);
+                    mensajes.generarDialogoMedicoInicial();
                 }
             }
         });
@@ -99,7 +100,8 @@ public class Login_inicial extends AppCompatActivity {
                     mensajes.Toast(getString(R.string.no_encontro_hospital));
                 } else {
                     preferencias.setIdCentroMedico(respuesta);
-                    iniciarPaciente();
+                    mensajes.generarDialogoPacienteInicial();
+                  //  iniciarPaciente();
 
                 }
             }
@@ -107,10 +109,6 @@ public class Login_inicial extends AppCompatActivity {
 
     }
 
-    private void iniciarMedico() {
-        Intent intent = new Intent(this, MainActivityMedico.class);
-        startActivity(intent);
-    }
 
     private void iniciarPaciente() {
         Intent intent = new Intent(this, MainActivity.class);
