@@ -22,20 +22,16 @@
                 android:minHeight="?attr/actionBarSize"
                 android:id="@+id/toolbar" />
 
-            <Button
-                android:text="Button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/btnBuscar" />
-
             <android.support.design.widget.FloatingActionButton
+                android:id="@+id/floatingActionButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:adjustViewBounds="true"
                 android:clickable="true"
+                android:src="@drawable/escaner"
+                app:backgroundTint="@color/common_google_signin_btn_text_dark_disabled"
                 app:fabSize="mini"
-                app:srcCompat="@android:drawable/presence_online"
-                android:id="@+id/floatingActionButton"
-                android:src="@drawable/escaner" />
+                app:srcCompat="@android:drawable/presence_online" />
         </LinearLayout>
     </FrameLayout>
 </RelativeLayout>

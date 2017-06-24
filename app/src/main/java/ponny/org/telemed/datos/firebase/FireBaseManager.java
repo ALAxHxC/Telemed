@@ -18,7 +18,9 @@ import ponny.org.telemed.R;
 import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.negocio.CentroMedicoNegocio;
 import ponny.org.telemed.negocio.EntidadesFireBase;
+import ponny.org.telemed.negocio.Oximetria;
 import ponny.org.telemed.vistas.Mensajes;
+import ponny.org.telemed.vistas.manager.ActividadesManager;
 import ponny.org.telemed.vistas.medicos.MainActivityMedico;
 import ponny.org.telemed.vistas.medicos.listas.ListaMedico;
 import ponny.org.telemed.vistas.sesion.Login_inicial;
@@ -34,15 +36,16 @@ public class FireBaseManager {
     private Mensajes mensajes;
     private List<EntidadesFireBase.CentroMedico> listaFirebase;
     private Preferencias preferencias;
+    private ActividadesManager actividadesManager;
 
-    public FireBaseManager(Context context,Preferencias preferencias) {
+    public FireBaseManager(Context context, Preferencias preferencias) {
         this.context = context;
         database = FirebaseDatabase.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         listaFirebase = new ArrayList<>();
         this.preferencias = preferencias;
-        mensajes = new Mensajes(context,preferencias,this);
-
+        mensajes = new Mensajes(context, preferencias, this);
+        actividadesManager=new ActividadesManager(context);
         //      subirCentrosMedicos();
         // subirPaciente();
     }
@@ -54,6 +57,7 @@ public class FireBaseManager {
         listaFirebase = new ArrayList<>();
         this.mensajes = mensajes;
         this.preferencias = new Preferencias(context);
+        actividadesManager=new ActividadesManager(context);
         //      subirCentrosMedicos();
         // subirPaciente();
     }
@@ -71,6 +75,50 @@ public class FireBaseManager {
         mDatabase.child(context.getString(R.string.Centro_Medico)).setValue(lista);
     }
 
+    public void subirRegistroMedico(String id, Oximetria oximetria) {
+        mDatabase.child(context.getString(R.string.oximetria)).
+                child(id).
+                child(oximetria.getCalendar().getTimeInMillis() + "")
+                .setValue(new EntidadesFireBase.OximetriaFB(oximetria.getSpo2(),
+                        oximetria.getPulse(),
+                        oximetria.getPi(),
+                        oximetria.getIsUrgencia(),
+                        oximetria.getCalendar().getTimeInMillis()
+                ));
+    }
+
+    public void traerRegistrosMedicos(final EntidadesFireBase.Paciente id) {
+        mDatabase.child(context.getString(R.string.oximetria)).child(id.getIdentificacion()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.getValue() != null) {
+                    mensajes.mostrarDialogo();
+
+                    List<EntidadesFireBase.OximetriaFB> listaOximetrias = new ArrayList<EntidadesFireBase.OximetriaFB>();
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        listaOximetrias.add(data.getValue(EntidadesFireBase.OximetriaFB.class));
+                    }
+                    if (listaOximetrias.size() <= 0) {
+                        mensajes.cancelarDialogos();
+                        mensajes.Toast(context.getString(R.string.no_hay_registros_paciente));
+                        return;
+                    }
+                    mensajes.cancelarDialogos();
+                    actividadesManager.irPacienteId(id,listaOximetrias);
+                } else {
+                    mensajes.Toast(context.getString(R.string.no_hay_registros_paciente));
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mensajes.Toast(context.getString(R.string.no_hay_registros_paciente));
+            }
+        });
+    }
+
     public void subirMedico() {
 
         mDatabase.child(context.getString(R.string.Centro_Medico)).addListenerForSingleValueEvent(
@@ -80,9 +128,9 @@ public class FireBaseManager {
                         int i = 0;
                         Iterator<DataSnapshot> iterable = dataSnapshot.getChildren().iterator();
                         while (iterable.hasNext()) {
-                          // Log.println(Log.ASSERT, "FBSQL", iterable.next().getValue().toString());
+                            // Log.println(Log.ASSERT, "FBSQL", iterable.next().getValue().toString());
                             EntidadesFireBase.CentroMedico centroMedico = (iterable.next().getValue(EntidadesFireBase.CentroMedico.class));
-                            Log.println(Log.ASSERT, "FBSQL",centroMedico.getNombre());
+                            Log.println(Log.ASSERT, "FBSQL", centroMedico.getNombre());
                             if (centroMedico.getId() == preferencias.getIdCentroMedico()) {
                                 mDatabase.child(context.getString(R.string.Centro_Medico))
                                         .child(i + "").child(context.getString(R.string.medico))
@@ -108,7 +156,7 @@ public class FireBaseManager {
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         preferencias.setDebeCrear(true);
-                        mensajes.finshApp(context.getString(R.string.error),context.getString(R.string.sin_conexion));
+                        mensajes.finshApp(context.getString(R.string.error), context.getString(R.string.sin_conexion));
                     }
                 });
     }
@@ -122,50 +170,51 @@ public class FireBaseManager {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        try{
-                        int i = 0;
-                        Iterator<DataSnapshot> iterable = dataSnapshot.getChildren().iterator();
-                        while (iterable.hasNext()) {
-                            EntidadesFireBase.CentroMedico centroMedico = (iterable.next().getValue(EntidadesFireBase.CentroMedico.class));
-                            Log.println(Log.ASSERT, "FBSQL",centroMedico.getNombre());
-                            if (centroMedico.getId() == preferencias.getIdCentroMedico()){
+                        try {
+                            int i = 0;
+                            Iterator<DataSnapshot> iterable = dataSnapshot.getChildren().iterator();
+                            while (iterable.hasNext()) {
+                                EntidadesFireBase.CentroMedico centroMedico = (iterable.next().getValue(EntidadesFireBase.CentroMedico.class));
+                                Log.println(Log.ASSERT, "FBSQL", centroMedico.getNombre());
+                                if (centroMedico.getId() == preferencias.getIdCentroMedico()) {
 
-                                mDatabase.child(context.getString(R.string.Centro_Medico))
-                                        .child(i + "").child(context.getString(R.string.paciente)).
-                                        child(preferencias.getIdentificacionPaciente()).
-                                        setValue(
-                                        new EntidadesFireBase.Paciente(preferencias.getIdentificacionPaciente(),
-                                                preferencias.getNombrePaciente(),
-                                                preferencias.getApellidosPaciente(),
-                                                preferencias.getSPO2(),
-                                                preferencias.getPulsoBajo(),
-                                                preferencias.getPulsoAlto(),
-                                                preferencias.getNumero1(),
-                                                preferencias.getIdCentroMedico(),
-                                                FirebaseInstanceId.getInstance().getToken(),
-                                                preferencias.getDescripccionPaciente()
-                                        ));
+                                    mDatabase.child(context.getString(R.string.Centro_Medico))
+                                            .child(i + "").child(context.getString(R.string.paciente)).
+                                            child(preferencias.getIdentificacionPaciente()).
+                                            setValue(
+                                                    new EntidadesFireBase.Paciente(preferencias.getIdentificacionPaciente(),
+                                                            preferencias.getNombrePaciente(),
+                                                            preferencias.getApellidosPaciente(),
+                                                            preferencias.getSPO2(),
+                                                            preferencias.getPulsoBajo(),
+                                                            preferencias.getPulsoAlto(),
+                                                            preferencias.getNumero1(),
+                                                            preferencias.getIdCentroMedico(),
+                                                            FirebaseInstanceId.getInstance().getToken(),
+                                                            preferencias.getDescripccionPaciente()
+                                                    ));
 
-                                preferencias.setDebeCrear(false);
-                                preferencias.setListaCentroMedicoId(i);
-                                mensajes.mostrarDialogo();
-                                mensajes.getActividadesManager().irPacienteMain();
+                                    preferencias.setDebeCrear(false);
+                                    preferencias.setListaCentroMedicoId(i);
+                                    mensajes.mostrarDialogo();
+                                    mensajes.getActividadesManager().irPacienteMain();
 
 
-                                Log.println(Log.ASSERT, "CREANDO PACIENTE", i+"CREANDO PACIENTE");
-                                return;
+                                    Log.println(Log.ASSERT, "CREANDO PACIENTE", i + "CREANDO PACIENTE");
+                                    return;
+                                }
+                                i++;
                             }
-                            i++;
-                        }
-                    }catch (Exception ex)
-                        {Log.println(Log.ASSERT,"FIREBASE",ex.toString());
-                        ex.printStackTrace();
+                        } catch (Exception ex) {
+                            Log.println(Log.ASSERT, "FIREBASE", ex.toString());
+                            ex.printStackTrace();
                         }
                     }
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         preferencias.setDebeCrear(true);
-                        mensajes.finshApp(context.getString(R.string.error),context.getString(R.string.sin_conexion));
+                        mensajes.finshApp(context.getString(R.string.error), context.getString(R.string.sin_conexion));
                     }
                 });
     }
@@ -197,28 +246,29 @@ public class FireBaseManager {
                 });
 
     }
-    public void cargarPacientes(final MainActivityMedico mainActivityMedico){
-        mDatabase.child(context.getString(R.string.Centro_Medico)).child(preferencias.getListaCentroMedicoId()+"")
+
+    public void cargarPacientes(final MainActivityMedico mainActivityMedico) {
+        mDatabase.child(context.getString(R.string.Centro_Medico)).child(preferencias.getListaCentroMedicoId() + "")
                 .child(context.getString(R.string.paciente)).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 Log.println(Log.ASSERT, "Los datos son", dataSnapshot.toString());
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    EntidadesFireBase.Paciente paciente= data.getValue(EntidadesFireBase.Paciente.class);
+                    EntidadesFireBase.Paciente paciente = data.getValue(EntidadesFireBase.Paciente.class);
                     mainActivityMedico.getPacienteList().add(paciente);
                 }
-                Log.println(Log.ASSERT,"FB",mainActivityMedico.getPacienteList().size()+"");
-                ListaMedico listaMedico=new ListaMedico(mainActivityMedico.getPacienteList(), mainActivityMedico);
-               mainActivityMedico.setAdapter(listaMedico);
+                Log.println(Log.ASSERT, "FB", mainActivityMedico.getPacienteList().size() + "");
+                ListaMedico listaMedico = new ListaMedico(mainActivityMedico.getPacienteList(), mainActivityMedico);
+                mainActivityMedico.setAdapter(listaMedico);
 
-                Log.println(Log.ASSERT,"FB",mainActivityMedico.getListaPacientes().toString());
+                Log.println(Log.ASSERT, "FB", mainActivityMedico.getListaPacientes().toString());
 
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-               Log.println(Log.ASSERT,"Error",databaseError.toString());
+                Log.println(Log.ASSERT, "Error", databaseError.toString());
             }
         });
 

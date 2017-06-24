@@ -73,7 +73,7 @@ public class Mensajes {
     }
 
     public void mostrarDialogo() {
-        progressDialog = new ProgressDialog(context, R.style.AppTheme);
+        progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setTitle(context.getString(R.string.espere));
         progressDialog.show();

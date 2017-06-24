@@ -22,7 +22,7 @@
             android:name=".servicios.bluetooth.BluetoothLeService"
             android:enabled="true" />
 
-        <activity android:name=".vistas.pacientes.MainActivity"></activity>
+        <activity android:name=".vistas.pacientes.MainActivity" />
         <activity android:name=".vistas.pacientes.OximeterActivity" />
 
         <receiver
@@ -50,10 +50,12 @@
         <activity android:name=".vistas.sesion.Login_inicial">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".vistas.medicos.MainActivityMedico"></activity>
+        <activity android:name=".vistas.medicos.MainActivityMedico" />
+        <activity android:name=".vistas.medicos.VistaPaciente"></activity>
     </application>
 
 </manifest>

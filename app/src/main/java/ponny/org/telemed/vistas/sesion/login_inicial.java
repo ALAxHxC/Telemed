@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import ponny.org.telemed.R;
 import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.datos.firebase.FireBaseManager;
@@ -31,6 +33,7 @@ public class Login_inicial extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         setContentView(R.layout.activity_login_inicial);
         preferencias = new Preferencias(this);
         fireBaseManager = new FireBaseManager(this, preferencias);

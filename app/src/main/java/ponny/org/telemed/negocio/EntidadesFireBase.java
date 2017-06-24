@@ -2,6 +2,7 @@ package ponny.org.telemed.negocio;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class EntidadesFireBase {
 
     }
 
-    public static class Paciente {
+    public static class Paciente  implements Serializable {
         String identificacion;
         String nombres;
         String apellidos;
@@ -188,7 +189,7 @@ public class EntidadesFireBase {
             this.centroMedico=centroMedico;
         }
 
-        public Medico() {
+        public Medico()  {
         }
 
         public String getIdentificacion() {
@@ -229,6 +230,64 @@ public class EntidadesFireBase {
 
         public void setCentroMedico(int centroMedico) {
             this.centroMedico = centroMedico;
+        }
+    }
+    public static class OximetriaFB implements Serializable{
+        private int spo2, pulse;
+        private double pi;
+        private int isUrgencia;
+        private Long time;
+
+        public OximetriaFB() {
+        }
+
+        public OximetriaFB(int spo2, int pulse, double pi, int isUrgencia, Long time) {
+            this.spo2 = spo2;
+            this.pulse = pulse;
+            this.pi = pi;
+            this.isUrgencia = isUrgencia;
+            this.time = time;
+        }
+
+
+        public int getSpo2() {
+            return spo2;
+        }
+
+        public void setSpo2(int spo2) {
+            this.spo2 = spo2;
+        }
+
+        public int getPulse() {
+            return pulse;
+        }
+
+        public void setPulse(int pulse) {
+            this.pulse = pulse;
+        }
+
+        public double getPi() {
+            return pi;
+        }
+
+        public void setPi(double pi) {
+            this.pi = pi;
+        }
+
+        public int getIsUrgencia() {
+            return isUrgencia;
+        }
+
+        public void setIsUrgencia(int isUrgencia) {
+            this.isUrgencia = isUrgencia;
+        }
+
+        public Long getTime() {
+            return time;
+        }
+
+        public void setTime(Long time) {
+            this.time = time;
         }
     }
 }

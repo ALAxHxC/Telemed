@@ -75,6 +75,14 @@
     <string name="sin_conexion">Sin conexion, intente mas tarde</string>
     <string name="listaCentroMedico">listaCentroMedico</string>
     <string name="debe_crear">Debe crear</string>
+    <string name="no_hay_registros_paciente">No hay registros del paciente</string>
+    <string name="registros_oximetrias">Registros Oximetrias</string>
+    <string name="Registros">Registros</string>
+    <string name="Fue_emergencia">Fue emergencia</string>
+    <string name="Es_emergencia">Es emergencia</string>
+    <string name="registros">Registros</string>
+    <string name="puslo">Pulso</string>
+    <string name="PI">PI</string>
 
 
 </resources>

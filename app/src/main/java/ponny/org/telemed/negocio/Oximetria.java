@@ -27,6 +27,16 @@ public class Oximetria {
         isUrgencia = 0;
     }
 
+    public Oximetria(int id, int spo2, int pulse, double pi, int isUrgencia, java.util.Calendar calendar) {
+        this.id = id;
+        this.spo2 = spo2;
+        this.pulse = pulse;
+        this.pi = pi;
+        this.isUrgencia = isUrgencia;
+        this.calendar=calendar;
+        this.detalle = calendar.getTime();
+    }
+
     public int getSpo2() {
         return spo2;
     }
@@ -67,10 +77,7 @@ public class Oximetria {
         this.calendar = calendar;
     }
 
-    public boolean datosValidos() {
-        return !(this.spo2 >= 127 || this.pulse >= 255 || this.pi == 0.0);
-
-    }
+    public boolean datosValidos() {return !(this.spo2 >= 127 || this.pulse >= 255 || this.pi == 0.0);}
 
     public int getId() {
         return id;

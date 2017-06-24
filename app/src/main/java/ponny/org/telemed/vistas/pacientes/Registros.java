@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TabHost;
 
 
@@ -32,6 +33,7 @@ import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.datos.basededatos.OximetriaBDController;
 import ponny.org.telemed.negocio.Oximetria;
 import ponny.org.telemed.vistas.Mensajes;
+import ponny.org.telemed.vistas.listas.ListaOximetrias;
 
 import static android.R.attr.data;
 import static ponny.org.telemed.utilidades.Utilidades.sdf;
@@ -39,13 +41,14 @@ import static ponny.org.telemed.utilidades.Utilidades.sdf;
 public class Registros extends AppCompatActivity {
     private OximetriaBDController oximetriaBDController;
     private TabHost tabshost;
-    private TabHost.TabSpec pulso, spo2;
+    private TabHost.TabSpec pulso, spo2, registros ;
     private LineChart lineChartPulso, lineChartOximetro;
     private List<Oximetria> listaGeneral;
     private ArrayList<String> valorex;
     private Preferencias preferencias;
     private Mensajes mensajes;
-
+    private ListView listViewOximetrias;
+//idListViewRegistrosOximetrias
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,18 +130,30 @@ public class Registros extends AppCompatActivity {
     private void CargarHost() {
         tabshost = (TabHost) findViewById(R.id.tabhostRegistros);
         tabshost.setup();
+
         pulso = tabshost.newTabSpec(getString(R.string.pulso));
         pulso.setContent(R.id.tabPulso);
         pulso.setIndicator(getString(R.string.pulso));
+
         spo2 = tabshost.newTabSpec(getString(R.string.oximetria));
         spo2.setContent(R.id.tabOximetro);
         spo2.setIndicator(getString(R.string.oximetria));
+
+        registros = tabshost.newTabSpec(getString(R.string.registros));
+        registros.setContent(R.id.tabhostRegistrosOximetrias);
+        registros.setIndicator(getString(R.string.registros));
+
+
         tabshost.addTab(pulso);
         tabshost.addTab(spo2);
+        tabshost.addTab(registros);
 
     }
 
     private void cargarChart() {
+        listViewOximetrias = (ListView) findViewById(R.id.idListViewRegistrosOximetrias);
+        ListaOximetrias listaOximetrias=new ListaOximetrias(this,listaGeneral);
+        listViewOximetrias.setAdapter(listaOximetrias);
         lineChartPulso = (LineChart) findViewById(R.id.chartPulso);
         lineChartOximetro = (LineChart) findViewById(R.id.chartOximetro);
     }

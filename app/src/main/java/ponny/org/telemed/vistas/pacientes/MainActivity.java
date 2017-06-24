@@ -132,13 +132,13 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             try {
-                                Log.println(Log.ASSERT, "BLE", device.getName());
+// q                                Log.println(Log.ASSERT, "BLE", device.getName());
 
                                 if (device.getName().equalsIgnoreCase(getString(R.string.name_device))) {
                                     controladorBLE.conectarDevice(device.getAddress(), device.getName());
                                 }
                             } catch (NullPointerException ex) {
-                                ex.printStackTrace();
+                            //    ex.printStackTrace();
                             }
                         }
                     });
@@ -188,13 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 scanearDispositivo(true);
             }
         });
-        Button btnBuscar = (Button) findViewById(R.id.btnBuscar);
-        btnBuscar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                scanearDispositivo(true);
-            }
-        });
+
 
     }
 

@@ -15,6 +15,7 @@ import java.util.List;
 import ponny.org.telemed.R;
 import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.datos.basededatos.OximetriaBDController;
+import ponny.org.telemed.datos.firebase.FireBaseManager;
 import ponny.org.telemed.negocio.Oximetria;
 import ponny.org.telemed.red.bluetooth.ControladorBLE;
 import ponny.org.telemed.red.celular.Llamada;
@@ -35,6 +36,7 @@ public class ServicioRegistro {
     private OximetriaBDController controllerOximetria;
     private Preferencias preferencias;
     private Mensajes mensajes;
+    private FireBaseManager fireBaseManager;
 
     public ServicioRegistro(ControladorBLE controladorBLE, Context context, Mensajes mensajes) {
         this.controladorBLE = controladorBLE;
@@ -43,11 +45,13 @@ public class ServicioRegistro {
         controllerOximetria = new OximetriaBDController(context);
         oximetria = new Oximetria();
         this.mensajes = mensajes;
+        this.fireBaseManager = new FireBaseManager(context, preferencias);
         enviado = false;
     }
 
     /**
      * Filtros de la conexion bluetooth
+     *
      * @return
      */
     public IntentFilter makeGattUpdateIntentFilter() {
@@ -61,6 +65,7 @@ public class ServicioRegistro {
 
     /**
      * Muestra lso servicios y perfiles del dispositivo
+     *
      * @param gattServices
      */
     public void displayGattServicesService(List<BluetoothGattService> gattServices) {
@@ -86,6 +91,7 @@ public class ServicioRegistro {
 
     /**
      * Recibe los datos del dispopsitivo y les da tratamiento
+     *
      * @param bytes
      * @param spo2
      * @param pi
@@ -94,10 +100,10 @@ public class ServicioRegistro {
     public void tratarDatos(byte[] bytes, TextView spo2, TextView pi, TextView pulse) {
         if (bytes[0] == -128) {
         } else if (bytes[0] == -127) {
-
             oximetria.setPi((byte) bytes[3] & 0xFF);
             oximetria.setPulse((byte) bytes[1] & 0xFF);
             oximetria.setSpo2((byte) bytes[2] & 0xFF);
+            oximetria.setIsUrgencia(this.isUrgente(oximetria));
             spo2.setText(oximetria.getSpo2() + "");
             pi.setText(oximetria.getPi() + "");
             pulse.setText(oximetria.getPulse() + "");
@@ -106,33 +112,30 @@ public class ServicioRegistro {
             double Pi = (byte) bytes[3] & 0xFF;
             if (oximetria.datosValidos()) {
                 contador++;
-
                 if (contador > context.getResources().getInteger(R.integer.valores_validos)) {
                     oximetria.setCalendar(Calendar.getInstance());
-
                     //   Log.println(Log.ASSERT, "BLE", "Enviar mensaje");
                     if (!enviado) {
-
                         if (SimGSM.simcard) {
-
                             //       hacerLLamada();
-
                             //enviarMensaje();
                             Log.println(Log.ASSERT, "BLE", mensaje());
                             // enviarMensaje();
-
                         } else {
-
-                            Log.println(Log.ASSERT, "BLE", "No hay simcard disponible");
+                       //     Log.println(Log.ASSERT, "BLE", "No hay simcard disponible");
+                        }
+                        Log.println(Log.ASSERT,"BLE","Es urgente:"+oximetria.isUrgencia());
+                        if(oximetria.isUrgencia()==1)
+                        {
+                            Log.println(Log.ASSERT,"BLE","Es urgente:"+oximetria.isUrgencia());
                         }
                         oximetria.setDetalle(new Date());
+                        fireBaseManager.subirRegistroMedico(preferencias.getIdentificacionPaciente(), oximetria);
                         long resp = controllerOximetria.insertarOximetria(oximetria);
                         if (resp >= 1) {
                             mensajes.Toast(context.getString(R.string.registro_exitoso));
                         } else {
                             mensajes.Toast(context.getString(R.string.registro_fail));
-
-
                         }
                         volverAinicio();
                     }
@@ -142,6 +145,24 @@ public class ServicioRegistro {
         }
     }
 
+    /**
+     * Determina si la toma de datos es urgente
+     * @param oximetria el dato tomado
+     * @return 1 si urgente
+     */
+    private int isUrgente(Oximetria oximetria){
+        Log.println(Log.ASSERT,"BLE","Determina urgencia" );
+        if(preferencias.getSPO2()<=oximetria.getSpo2()){
+           return 1;
+        }
+        if(oximetria.getPulse()>=preferencias.getPulsoAlto()){
+            return 1;
+        }
+        if(oximetria.getPulse()<=preferencias.getPulsoBajo()){
+            return 1;
+        }
+        return 0;
+    }
     /**
      * Envia mensaje SMS
      */
@@ -162,6 +183,7 @@ public class ServicioRegistro {
 
     /**
      * Mensaje que serva enviado SMS
+     *
      * @return
      */
     public String mensaje() {
