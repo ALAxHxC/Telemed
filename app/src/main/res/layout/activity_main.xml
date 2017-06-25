@@ -20,7 +20,7 @@
                 android:background="?attr/colorPrimary"
                 android:theme="?attr/actionBarTheme"
                 android:minHeight="?attr/actionBarSize"
-                android:id="@+id/toolbar" />
+                android:id="@+id/toolbarActividadPacientes" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/floatingActionButton"

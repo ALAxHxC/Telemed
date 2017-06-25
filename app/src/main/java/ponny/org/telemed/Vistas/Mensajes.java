@@ -20,6 +20,7 @@ import ponny.org.telemed.R;
 import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.datos.firebase.FireBaseManager;
 import ponny.org.telemed.vistas.manager.ActividadesManager;
+import ponny.org.telemed.vistas.medicos.VistaPaciente;
 import ponny.org.telemed.vistas.pacientes.Registros;
 
 
@@ -387,7 +388,7 @@ public class Mensajes {
      * @param registros actividad
      * @param titulo    titulo del dialgo
      */
-    public void crearDataPickerFiltroRegistros(final Registros registros, String titulo) {
+    public void crearDataPickerFiltroRegistrosPaciente(final Registros registros, String titulo) {
         final Dialog dialogo = crearPickerGenerico(titulo);
         final DatePicker calendario = (DatePicker) dialogo.findViewById(R.id.datePickerNacimiento);
         FloatingActionButton btnGuardar = (FloatingActionButton) dialogo.findViewById(R.id.floatingActionButtonGuardarCalendario);
@@ -401,6 +402,27 @@ public class Mensajes {
                 //  Log.println(Log.ASSERT, "BD", preferencias.getNacimientPaciente());
                 registros.setListaGeneral(registros.getOximetriaBDController().cargarRegistros(calendario.getYear(), calendario.getMonth()));
                 registros.recargarRegistros();
+                dialogo.dismiss();
+                //  generarDialogoParametros(context.getString(R.string.titulo_parametros), true);
+            }
+        });
+        dialogo.show();
+    }
+    public void crearDataPickerFiltroRegistrosMedico(final VistaPaciente registros, String titulo) {
+        final Dialog dialogo = crearPickerGenerico(titulo);
+        final DatePicker calendario = (DatePicker) dialogo.findViewById(R.id.datePickerNacimiento);
+        FloatingActionButton btnGuardar = (FloatingActionButton) dialogo.findViewById(R.id.floatingActionButtonGuardarCalendario);
+        eliminarDayField(calendario);
+        btnGuardar.setImageResource(R.drawable.buscar);
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.println(Log.ASSERT, "CAL", calendario.getMonth() + " " + calendario.getYear());
+                //  preferencias.setNacimientPaciente(calendario.getYear() + "-" + calendario.getMonth() + "-" + calendario.getDayOfMonth());
+                //  Log.println(Log.ASSERT, "BD", preferencias.getNacimientPaciente());+
+                if(registros.buscarSegunFecha(calendario.getYear(), calendario.getMonth())){
+                registros.recargarRegistros();
+                }
                 dialogo.dismiss();
                 //  generarDialogoParametros(context.getString(R.string.titulo_parametros), true);
             }

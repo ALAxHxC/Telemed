@@ -73,6 +73,7 @@ public class EntidadesFireBase {
         int centromedico;
         String idFcm;
         String descripccion;
+
         public Paciente() {
 
         }
@@ -88,6 +89,7 @@ public class EntidadesFireBase {
             this.centromedico = centromedico;
             this.idFcm=idFcm;
             this.descripccion=descripccion;
+
         }
 
         public String getIdentificacion() {
@@ -170,6 +172,7 @@ public class EntidadesFireBase {
             this.descripccion = descripccion;
         }
 
+
         public String toStringMedico() {
         return " "+spo2+" "+pusloalto+" "+puslobajo;
         }
@@ -180,6 +183,7 @@ public class EntidadesFireBase {
         String apellidos;
         String fcm;
         int centroMedico;
+
 
         public Medico(String identificacion, String nombres, String apellidos,String fcm, int centroMedico) {
             this.identificacion = identificacion;

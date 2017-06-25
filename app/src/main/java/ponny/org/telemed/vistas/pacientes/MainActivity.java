@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import ponny.org.telemed.R;
 import ponny.org.telemed.datos.basededatos.OximetriaBDController;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(null);
 
-        Toolbar topToolBar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar topToolBar = (Toolbar) findViewById(R.id.toolbarActividadPacientes);
         setSupportActionBar(topToolBar);
         topToolBar.setLogo(R.drawable.logo);
         topToolBar.setLogoDescription(getResources().getString(R.string.logo_desc));
@@ -122,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
         //activarBluetooth();
     }
 
+    @Override
+    public void onBackPressed() {
+       return;
+    }
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {

@@ -83,6 +83,7 @@
     <string name="registros">Registros</string>
     <string name="puslo">Pulso</string>
     <string name="PI">PI</string>
+    <string name="recargando_registros">Cargando todos los registros</string>
 
 
 </resources>

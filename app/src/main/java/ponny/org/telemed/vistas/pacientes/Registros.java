@@ -33,12 +33,13 @@ import ponny.org.telemed.datos.Preferencias;
 import ponny.org.telemed.datos.basededatos.OximetriaBDController;
 import ponny.org.telemed.negocio.Oximetria;
 import ponny.org.telemed.vistas.Mensajes;
+import ponny.org.telemed.vistas.VistaRegistros;
 import ponny.org.telemed.vistas.listas.ListaOximetrias;
 
 import static android.R.attr.data;
 import static ponny.org.telemed.utilidades.Utilidades.sdf;
 
-public class Registros extends AppCompatActivity {
+public class Registros extends AppCompatActivity   implements VistaRegistros {
     private OximetriaBDController oximetriaBDController;
     private TabHost tabshost;
     private TabHost.TabSpec pulso, spo2, registros ;
@@ -83,7 +84,7 @@ public class Registros extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
-            mensajes.crearDataPickerFiltroRegistros(this, getString(R.string.seleccione));
+            mensajes.crearDataPickerFiltroRegistrosPaciente(this, getString(R.string.seleccione));
             return true;
         }
         if (id == R.id.action_save) {
@@ -104,12 +105,14 @@ public class Registros extends AppCompatActivity {
             lineChartOximetro.invalidate();
             cargarLineDataOximetria();
             cargarLineDataPulso();
+            ListaOximetrias adapter = new ListaOximetrias(this, listaGeneral);
+            listViewOximetrias.setAdapter(adapter);
         } catch (Exception ex) {
             mensajes.Toast(getString(R.string.no_hay_registros));
         }
     }
 
-    private void cargartodos() {
+    public void cargartodos() {
         setListaGeneral(oximetriaBDController.cargarRegistros());
         lineChartPulso.invalidate();
         lineChartOximetro.invalidate();
@@ -118,7 +121,7 @@ public class Registros extends AppCompatActivity {
 
     }
 
-    private void cargarToolbar() {
+    public void cargarToolbar() {
         setTitle(null);
         Toolbar topToolBar = (Toolbar) findViewById(R.id.toolbarRegistros);
         setSupportActionBar(topToolBar);
@@ -169,7 +172,7 @@ public class Registros extends AppCompatActivity {
 
     }
 
-    private List<Entry> cargarEntryOximetria() {
+    public List<Entry> cargarEntryOximetria() {
         List<Entry> entries = new ArrayList<>();
         valorex = new ArrayList<>();
         Log.println(Log.ASSERT, "BLE", "Cargara " + listaGeneral.size());
@@ -181,7 +184,7 @@ public class Registros extends AppCompatActivity {
         return entries;
     }
 
-    private void cargarLineDataOximetria() {
+    public void cargarLineDataOximetria() {
         ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(dataOximetria());
         dataSets.add(oximetriaUmbralData());
@@ -192,7 +195,7 @@ public class Registros extends AppCompatActivity {
         lineChartOximetro.invalidate(); // refresh
     }
 
-    private void cargarLineDataPulso() {
+    public void cargarLineDataPulso() {
         ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(dataPulso());
         dataSets.add(pusloUmbralAltoData());
@@ -205,7 +208,7 @@ public class Registros extends AppCompatActivity {
 
     }
 
-    private LineDataSet dataPulso() {
+    public LineDataSet dataPulso() {
         LineDataSet pusloData = new LineDataSet(cargarEntryPulso(), getString(R.string.pulso));
         pusloData.setColor(Color.TRANSPARENT);
         pusloData.setFillColor(Color.GREEN);
@@ -214,7 +217,7 @@ public class Registros extends AppCompatActivity {
         return pusloData;
     }
 
-    private LineDataSet dataOximetria() {
+    public LineDataSet dataOximetria() {
         LineDataSet oximetriasData = new LineDataSet(cargarEntryOximetria(), getString(R.string.oximetria));
         oximetriasData.setColor(Color.TRANSPARENT);
         oximetriasData.setFillColor(Color.GREEN);
@@ -224,7 +227,7 @@ public class Registros extends AppCompatActivity {
 
     }
 
-    private LineDataSet oximetriaUmbralData() {
+    public LineDataSet oximetriaUmbralData() {
 
         LineDataSet oximetriaUmbralData = new LineDataSet(valorUrgenciaOximetria(), getString(R.string.umbral));
         oximetriaUmbralData.setColor(Color.BLACK);
@@ -232,7 +235,7 @@ public class Registros extends AppCompatActivity {
         return oximetriaUmbralData;
     }
 
-    private LineDataSet pulsoUmbralBajoData() {
+    public LineDataSet pulsoUmbralBajoData() {
 
         LineDataSet pusloUmbralData = new LineDataSet(valorUrgenciapulsobajo(), getString(R.string.pulso_bajo));
         pusloUmbralData.setColor(Color.BLACK);
@@ -240,7 +243,7 @@ public class Registros extends AppCompatActivity {
         return pusloUmbralData;
     }
 
-    private LineDataSet pusloUmbralAltoData() {
+    public LineDataSet pusloUmbralAltoData() {
 
         LineDataSet pusloUmbralData = new LineDataSet(valorUrgenciapulsoalto(), getString(R.string.pulso_alto));
         pusloUmbralData.setColor(Color.BLACK);
@@ -248,7 +251,7 @@ public class Registros extends AppCompatActivity {
         return pusloUmbralData;
     }
 
-    private List<Entry> valorUrgenciaOximetria() {
+    public List<Entry> valorUrgenciaOximetria() {
         List<Entry> valorUrgencia = new ArrayList<>();
         valorUrgencia.add(new Entry(0, preferencias.getSPO2()));
         valorUrgencia.add(new Entry(listaGeneral.size() - 1, preferencias.getSPO2()));
@@ -256,7 +259,7 @@ public class Registros extends AppCompatActivity {
 
     }
 
-    private List<Entry> valorUrgenciapulsobajo() {
+    public List<Entry> valorUrgenciapulsobajo() {
         List<Entry> valorUrgencia = new ArrayList<>();
         valorUrgencia.add(new Entry(0, preferencias.getPulsoBajo()));
         valorUrgencia.add(new Entry(listaGeneral.size() - 1, preferencias.getPulsoBajo()));
@@ -264,7 +267,7 @@ public class Registros extends AppCompatActivity {
 
     }
 
-    private List<Entry> valorUrgenciapulsoalto() {
+    public List<Entry> valorUrgenciapulsoalto() {
         List<Entry> valorUrgencia = new ArrayList<>();
         valorUrgencia.add(new Entry(0, preferencias.getPulsoAlto()));
         valorUrgencia.add(new Entry(listaGeneral.size() - 1, preferencias.getPulsoAlto()));
@@ -272,14 +275,14 @@ public class Registros extends AppCompatActivity {
 
     }
 
-    private void ejeX(LineChart lineChart) {
+    public void ejeX(LineChart lineChart) {
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGridColor(Color.BLACK);
 
     }
 
-    private void guardarGraficas() {
+    public void guardarGraficas() {
         if(listaGeneral.size()<=1) {
             if (lineChartOximetro.saveToGallery(getString(R.string.oximetria) + "-" + sdf.format(new Date()), 100) &&
                     lineChartPulso.saveToGallery(getString(R.string.pulso) + sdf.format(new Date()), 100)) {
