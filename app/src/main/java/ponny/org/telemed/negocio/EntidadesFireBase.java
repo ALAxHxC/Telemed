@@ -73,12 +73,17 @@ public class EntidadesFireBase {
         int centromedico;
         String idFcm;
         String descripccion;
-
+        String idMedico;
         public Paciente() {
 
         }
 
-        public Paciente(String identificacion, String nombres, String apellidos, int spo2, int puslobajo, int pusloalto, String numeropaciente, int centromedico, String idFcm, String descripccion) {
+        public Paciente(String identificacion, String nombres,
+                        String apellidos, int spo2,
+                        int puslobajo, int pusloalto,
+                        String numeropaciente, int centromedico,
+                        String idFcm, String descripccion,
+                        String idMedico) {
             this.identificacion = identificacion;
             this.nombres = nombres;
             this.apellidos = apellidos;
@@ -89,6 +94,7 @@ public class EntidadesFireBase {
             this.centromedico = centromedico;
             this.idFcm=idFcm;
             this.descripccion=descripccion;
+            this.idMedico=idMedico;
 
         }
 
@@ -172,6 +178,13 @@ public class EntidadesFireBase {
             this.descripccion = descripccion;
         }
 
+        public String getIdMedico() {
+            return idMedico;
+        }
+
+        public void setIdMedico(String idMedico) {
+            this.idMedico = idMedico;
+        }
 
         public String toStringMedico() {
         return " "+spo2+" "+pusloalto+" "+puslobajo;
@@ -183,14 +196,16 @@ public class EntidadesFireBase {
         String apellidos;
         String fcm;
         int centroMedico;
+        int nPacientes;
 
 
-        public Medico(String identificacion, String nombres, String apellidos,String fcm, int centroMedico) {
+        public Medico(String identificacion, String nombres, String apellidos,String fcm, int centroMedico, int nPacientes) {
             this.identificacion = identificacion;
             this.nombres = nombres;
             this.apellidos = apellidos;
             this.fcm = fcm;
             this.centroMedico=centroMedico;
+            this.nPacientes=nPacientes;
         }
 
         public Medico()  {
@@ -235,22 +250,31 @@ public class EntidadesFireBase {
         public void setCentroMedico(int centroMedico) {
             this.centroMedico = centroMedico;
         }
+
+        public int getnPacientes() {
+            return nPacientes;
+        }
+
+        public void setnPacientes(int nPacientes) {
+            this.nPacientes = nPacientes;
+        }
     }
     public static class OximetriaFB implements Serializable{
         private int spo2, pulse;
         private double pi;
         private int isUrgencia;
         private Long time;
-
+        private String atencion;
         public OximetriaFB() {
         }
 
-        public OximetriaFB(int spo2, int pulse, double pi, int isUrgencia, Long time) {
+        public OximetriaFB(int spo2, int pulse, double pi, int isUrgencia, Long time, String atencion) {
             this.spo2 = spo2;
             this.pulse = pulse;
             this.pi = pi;
             this.isUrgencia = isUrgencia;
             this.time = time;
+            this.atencion=atencion;
         }
 
 
@@ -292,6 +316,14 @@ public class EntidadesFireBase {
 
         public void setTime(Long time) {
             this.time = time;
+        }
+
+        public String getAtencion() {
+            return atencion;
+        }
+
+        public void setAtencion(String atencion) {
+            this.atencion = atencion;
         }
     }
 }

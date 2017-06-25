@@ -1,6 +1,7 @@
 package ponny.org.telemed.datos.firebase;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -11,6 +12,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -76,6 +80,7 @@ public class FireBaseManager {
     }
 
     public void subirRegistroMedico(String id, Oximetria oximetria) {
+
         mDatabase.child(context.getString(R.string.oximetria)).
                 child(id).
                 child(oximetria.getCalendar().getTimeInMillis() + "")
@@ -83,7 +88,8 @@ public class FireBaseManager {
                         oximetria.getPulse(),
                         oximetria.getPi(),
                         oximetria.getIsUrgencia(),
-                        oximetria.getCalendar().getTimeInMillis()
+                        oximetria.getCalendar().getTimeInMillis(),
+                        ""
                 ));
     }
 
@@ -140,7 +146,7 @@ public class FireBaseManager {
                                                 preferencias.getNombrePaciente(),
                                                 preferencias.getApellidosPaciente(),
                                                 FirebaseInstanceId.getInstance().getToken(),
-                                                preferencias.getIdCentroMedico()));
+                                                preferencias.getIdCentroMedico(),0));
                                 preferencias.setListaCentroMedicoId(i);
                                 preferencias.setDebeCrear(false);
                                 mensajes.mostrarDialogo();
@@ -165,6 +171,69 @@ public class FireBaseManager {
         mDatabase.child(context.getString(R.string.paciente)).push().setValue("paciente");
     }
 
+    public void traerMedicos(final int i){
+        mDatabase.child(context.getString(R.string.Centro_Medico)).child(i+"")
+                .child(context.getString(R.string.medico)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<EntidadesFireBase.Medico> medicoList=new ArrayList<EntidadesFireBase.Medico>();
+                for(DataSnapshot medico:dataSnapshot.getChildren())
+                {
+                    medicoList.add(medico.getValue(EntidadesFireBase.Medico.class));
+
+                }
+               medicoList=organizarMedicoDisponibles(medicoList);
+                if(medicoList.size()>0)
+                {
+                    subirPaciente(medicoList.get(0),i);
+                }else
+                {
+                    mensajes.Toast(context.getString(R.string.sin_medicos));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mensajes.Toast(context.getString(R.string.sin_conexion));
+            }
+        });
+
+    }
+    private List<EntidadesFireBase.Medico> organizarMedicoDisponibles(List<EntidadesFireBase.Medico> medicoList)
+    {
+          Collections.sort(medicoList, new Comparator<EntidadesFireBase.Medico>() {
+            @Override
+            public int compare(EntidadesFireBase.Medico medico, EntidadesFireBase.Medico t1) {
+                return (int)(t1.getnPacientes()-medico.getnPacientes());
+            }
+        });
+        return  medicoList;
+
+    }
+
+    private void subirPaciente(EntidadesFireBase.Medico medico,int i)
+    {
+        mDatabase.child(context.getString(R.string.Centro_Medico))
+                .child(i + "").child(context.getString(R.string.paciente)).
+                child(preferencias.getIdentificacionPaciente()).
+                setValue(
+                        new EntidadesFireBase.Paciente(preferencias.getIdentificacionPaciente(),
+                                preferencias.getNombrePaciente(),
+                                preferencias.getApellidosPaciente(),
+                                preferencias.getSPO2(),
+                                preferencias.getPulsoBajo(),
+                                preferencias.getPulsoAlto(),
+                                preferencias.getNumero1(),
+                                preferencias.getIdCentroMedico(),
+                                FirebaseInstanceId.getInstance().getToken(),
+                                preferencias.getDescripccionPaciente(),
+                                medico.getIdentificacion()
+                        ));
+        mDatabase.child(context.getString(R.string.Centro_Medico))
+                .child(i + "").child(context.getString(R.string.medico)).
+                child(medico.getIdentificacion()).child(context.getString(R.string.nPacientes))
+                .setValue((medico.getnPacientes()+1));
+    }
     public void subirPaciente() {
         mDatabase.child(context.getString(R.string.Centro_Medico)).addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -177,25 +246,9 @@ public class FireBaseManager {
                                 EntidadesFireBase.CentroMedico centroMedico = (iterable.next().getValue(EntidadesFireBase.CentroMedico.class));
                                 Log.println(Log.ASSERT, "FBSQL", centroMedico.getNombre());
                                 if (centroMedico.getId() == preferencias.getIdCentroMedico()) {
-
-                                    mDatabase.child(context.getString(R.string.Centro_Medico))
-                                            .child(i + "").child(context.getString(R.string.paciente)).
-                                            child(preferencias.getIdentificacionPaciente()).
-                                            setValue(
-                                                    new EntidadesFireBase.Paciente(preferencias.getIdentificacionPaciente(),
-                                                            preferencias.getNombrePaciente(),
-                                                            preferencias.getApellidosPaciente(),
-                                                            preferencias.getSPO2(),
-                                                            preferencias.getPulsoBajo(),
-                                                            preferencias.getPulsoAlto(),
-                                                            preferencias.getNumero1(),
-                                                            preferencias.getIdCentroMedico(),
-                                                            FirebaseInstanceId.getInstance().getToken(),
-                                                            preferencias.getDescripccionPaciente()
-                                                    ));
-
-                                    preferencias.setDebeCrear(false);
+                                    traerMedicos(i);
                                     preferencias.setListaCentroMedicoId(i);
+                                    preferencias.setDebeCrear(false);
                                     mensajes.mostrarDialogo();
                                     mensajes.getActividadesManager().irPacienteMain();
 

@@ -84,6 +84,8 @@
     <string name="puslo">Pulso</string>
     <string name="PI">PI</string>
     <string name="recargando_registros">Cargando todos los registros</string>
+    <string name="nPacientes">nPacientes</string>
+    <string name="sin_medicos">Imposible registrar, contacte al centro medico</string>
 
 
 </resources>
